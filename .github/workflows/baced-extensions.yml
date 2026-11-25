@@ -8,7 +8,7 @@ on:
     - 'extension/**'
     - 'Cargo.toml'
     - 'Cargo.lock'
-    - '.github/workflows/extensions.yml'
+    - '.github/workflows/baced-extensions.yml'
 
 permissions:
   contents: read
