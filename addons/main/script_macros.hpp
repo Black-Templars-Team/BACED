@@ -4,7 +4,17 @@
 // Default versioning level
 #define DEFAULT_VERSIONING_LEVEL 2
 
+// Same as ACE3: DFUNC/DEFUNC are always the function variable itself
+#define DFUNC(var1) TRIPLES(ADDON,fnc,var1)
+#define DEFUNC(var1,var2) TRIPLES(DOUBLES(PREFIX,var1),fnc,var2)
+
 // Same as ACE3: functions live in <component>\functions\fnc_<name>.sqf
+#ifdef DISABLE_COMPILE_CACHE
+    #define LINKFUNC(x) {call FUNC(x)}
+#else
+    #define LINKFUNC(x) FUNC(x)
+#endif
+
 #ifdef DISABLE_COMPILE_CACHE
     #undef PREP
     #define PREP(fncName) DFUNC(fncName) = compile preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)
