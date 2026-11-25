@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: ACE3 issue tracker
+    url: https://github.com/acemod/ACE3/issues
+    about: Bugs that also happen without BACED, and ACE3 features in general, belong here.
+  - name: BACED Discord
+    url: https://discord.gg/blacktemplar-a3
+    about: Questions and help with BACED.

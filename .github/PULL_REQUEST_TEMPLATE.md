@@ -4,6 +4,7 @@
 
 ### IMPORTANT
 
-- If the contribution affects [the documentation](https://github.com/acemod/ACE3/tree/master/docs), please include your changes in this pull request so the documentation will appear on the [website](https://ace3.acemod.org/).
-- [Development Guidelines](https://ace3.acemod.org/wiki/development/) are read, understood and applied.
+- This pull request targets the `baced` branch, not `master`.
+- If the contribution affects [the wiki](https://github.com/Black-Templars-Team/BACED/wiki), please mention the pages that need updating.
+- The [development guide](https://github.com/Black-Templars-Team/BACED/wiki/Setting-Up-the-Development-Environment) is read, understood and applied. ACE3 functions are changed through overrides (`tools/ace_override.py`), not by copying ACE3 addons.
 - Title of this PR uses our standard template `Component - Add|Fix|Improve|Change|Make|Remove {changes}`.
