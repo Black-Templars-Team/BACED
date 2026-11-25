@@ -25,8 +25,7 @@
 </p>
 
 <p align="center">
-    <sup><strong>Requires the latest versions of <a href="https://github.com/acemod/ACE3/releases">ACE3</a> and <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>.<br/>
-    Visit us on <a href="https://twitter.com/ACE3Mod">Twitter</a> | <a href="https://www.facebook.com/ACE3Mod">Facebook</a> | <a href="https://www.youtube.com/c/ACE3Mod">YouTube</a> | <a href="https://www.reddit.com/r/arma/search?q=ACE&restrict_sr=on&sort=new&t=all">Reddit</a></strong></sup>
+    <sup><strong>Requires the latest versions of <a href="https://github.com/acemod/ACE3/releases">ACE3</a> and <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>.<br/></sup>
 </p>
 
 **BACED** is an effort by the teams behind **Black Templars' Armoury**, **Crossing the Rubicon** and **Tactical Dreadnought Armoury** to improve the realism and authenticity of 40K Arma 3.
