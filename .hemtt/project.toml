@@ -1,17 +1,15 @@
-name = "ACE3"
-prefix = "ace"
-author = "ACE-Team"
+name = "BACED"
+prefix = "baced"
+author = "BACED-Team"
 mainprefix = "z"
 
 [files]
 include = [
-    "*.dll",
-    "*.so",
     "mod.cpp",
-    "README*.md",  # Translated READMEs get moved to root in a hook (virtual file system)
+    "README.md",
     "AUTHORS.txt",
     "LICENSE",
-    "logo_ace3_ca.paa",
+    "logo_baced_ca.paa",
     "meta.cpp",
 ]
 

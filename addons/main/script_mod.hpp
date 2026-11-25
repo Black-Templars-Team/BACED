@@ -1,7 +1,7 @@
 // COMPONENT should be defined in the script_component.hpp and included BEFORE this hpp
 
 #define MAINPREFIX z
-#define PREFIX ace
+#define PREFIX baced
 
 #include "script_version.hpp"
 
@@ -17,7 +17,7 @@
     #define COMPONENT_BEAUTIFIED COMPONENT
 #endif
 #ifdef SUBCOMPONENT_BEAUTIFIED
-    #define COMPONENT_NAME QUOTE(ACE3 - COMPONENT_BEAUTIFIED - SUBCOMPONENT_BEAUTIFIED)
+    #define COMPONENT_NAME QUOTE(BACED - COMPONENT_BEAUTIFIED - SUBCOMPONENT_BEAUTIFIED)
 #else
-    #define COMPONENT_NAME QUOTE(ACE3 - COMPONENT_BEAUTIFIED)
+    #define COMPONENT_NAME QUOTE(BACED - COMPONENT_BEAUTIFIED)
 #endif

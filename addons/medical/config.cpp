@@ -6,19 +6,27 @@ class CfgPatches {
         units[] = {};
         weapons[] = {};
         requiredVersion = REQUIRED_VERSION;
-        requiredAddons[] = {"ace_medical_engine"};
+        // Every ACE medical component is listed so BACED's config loads after all of them
+        // and can patch any of their classes, including their XEH entries.
+        requiredAddons[] = {
+            "baced_main",
+            "ace_medical",
+            "ace_medical_ai",
+            "ace_medical_blood",
+            "ace_medical_damage",
+            "ace_medical_engine",
+            "ace_medical_feedback",
+            "ace_medical_gui",
+            "ace_medical_statemachine",
+            "ace_medical_status",
+            "ace_medical_treatment",
+            "ace_medical_vitals"
+        };
         skipWhenMissingDependencies = 1;
-        author = ECSTRING(common,ACETeam);
-        authors[] = {"Glowbal", "KoffeinFlummi","Arcanum417"};
-        url = ECSTRING(main,URL);
+        author = "BACED Team";
+        url = "https://github.com/Black-Templars-Team/BACED";
         VERSION_CONFIG;
     };
 };
 
-#include "ACE_Settings.hpp"
 #include "CfgEventHandlers.hpp"
-#include "CfgVehicles.hpp"
-
-class ACE_Tests {
-    medicalHitpoints = QPATHTOF(dev\test_hitpointConfigs.sqf);
-};
