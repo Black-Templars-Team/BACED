@@ -1,9 +1,9 @@
-name: Arma
+name: BACED Arma
 
 on:
   push:
     branches:
-    - master
+    - baced
   pull_request:
 
 permissions:

@@ -1,7 +1,9 @@
-name: Extensions
+name: BACED Extensions
 
 on:
   push:
+    branches:
+    - baced
     paths:
     - 'extension/**'
     - 'Cargo.toml'
