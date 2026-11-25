@@ -6,32 +6,22 @@ class CfgPatches {
         units[] = {};
         weapons[] = {};
         requiredVersion = REQUIRED_VERSION;
-        requiredAddons[] = {"cba_main"};
-        author = ECSTRING(common,ACETeam);
-        url = CSTRING(URL);
+        requiredAddons[] = {"cba_main", "ace_main"};
+        author = "BACED Team";
+        url = "https://github.com/Black-Templars-Team/BACED";
         VERSION_CONFIG;
-    };
-
-    class XADDON: ADDON { // just in-case anything requires "acex_main"
-        units[] = {};
-        weapons[] = {};
     };
 };
 
 class CfgMods {
     class PREFIX {
-        dir = "@ace";
-        name = "Advanced Combat Environment 3";
+        dir = "@baced";
+        name = "BACED";
         picture = "A3\Ui_f\data\Logos\arma3_expansion_alpha_ca";
         hidePicture = "true";
         hideName = "true";
-        actionName = "Website";
-        action = CSTRING(URL);
-        description = "Issue Tracker: https://github.com/acemod/ACE3/issues";
+        actionName = "GitHub";
+        action = "https://github.com/Black-Templars-Team/BACED";
+        description = "Issue Tracker: https://github.com/Black-Templars-Team/BACED/issues";
     };
 };
-
-#include "CfgSettings.hpp"
-#include "CfgModuleCategories.hpp"
-#include "CfgVehicleClasses.hpp"
-#include "CfgEditorSubcategories.hpp"

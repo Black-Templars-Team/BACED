@@ -1,18 +1,12 @@
 [config.file_type]
 options.allow_no_extension = true
 
-[config.cfgpatches_scope]
-options.ignore_prefixes = ["vn_"] # sog compat
-
 [stringtables.usage]
-options.ignore = [
-    "str_ace_repair_hit",
-]
 options.ignore_unused = true
 
 [sqf.banned_commands]
 options.ignore = [
-    "addPublicVariableEventHandler", # Alt syntax is broken, we are using main syntax
+    "addPublicVariableEventHandler", # Alt syntax is broken, ACE uses main syntax
     "createSoundSource", # Greatly attenuated when in first person and in a vehicle
 ]
 
@@ -27,15 +21,4 @@ options.release = [
 ]
 
 [sqf.undefined]
-enabled = true
-options.check_orphan_code = true
-
-[sqf.unused]
-#enabled = true #many false positives without DEBUG_MODE_FULL
-options.check_params = false
-
-[sqf.shadowed]
-enabled = false
-
-[sqf.not_private]
 enabled = true

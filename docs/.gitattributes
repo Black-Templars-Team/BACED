@@ -1,6 +1,0 @@
-* text=auto
-*.png binary
-*.jpg binary
-*.webp binary
-*.paa binary
-*.sh eol=lf

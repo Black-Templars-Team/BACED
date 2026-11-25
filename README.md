@@ -25,13 +25,13 @@
 </p>
 
 <p align="center">
-    <sup><strong>Requires the latest version of <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>.<br/>
+    <sup><strong>Requires the latest versions of <a href="https://github.com/acemod/ACE3/releases">ACE3</a> and <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>.<br/>
     Visit us on <a href="https://twitter.com/ACE3Mod">Twitter</a> | <a href="https://www.facebook.com/ACE3Mod">Facebook</a> | <a href="https://www.youtube.com/c/ACE3Mod">YouTube</a> | <a href="https://www.reddit.com/r/arma/search?q=ACE&restrict_sr=on&sort=new&t=all">Reddit</a></strong></sup>
 </p>
 
 **BACED** is an effort by the teams behind **Black Templars' Armoury**, **Crossing the Rubicon** and **Tactical Dreadnought Armoury** to improve the realism and authenticity of 40K Arma 3.
 
-The project is a fork of [ACE3](https://github.com/acemod/ACE3). It will aim to maintain ACE3 as base with custom 40k related patches on top. Using this project in your modlist should not make you fall behind in ACE3 updates!
+BACED is a patch mod for [ACE3](https://github.com/acemod/ACE3): you keep ACE3 in your modlist and load BACED alongside it. BACED only replaces the parts of ACE3 it changes for 40K, so using it should not make you fall behind in ACE3 updates!
 
 ## Core features
 
@@ -44,7 +44,7 @@ The project is a fork of [ACE3](https://github.com/acemod/ACE3). It will aim to 
 
 ## Getting started
 
-BACED requires Arma 3 and the latest version of <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>.
+BACED requires Arma 3 and the latest versions of <a href="https://github.com/acemod/ACE3/releases">ACE3</a> and <a href="https://github.com/CBATeam/CBA_A3/releases">CBA A3</a>. Load BACED alongside them; it does not replace ACE3.
 
 ## Contributing
 
