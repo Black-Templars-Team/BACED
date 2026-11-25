@@ -71,20 +71,6 @@ To help us test the latest development changes, download the [artifact](https://
     <td><a href="https://discord.gg/blacktemplar-a3">Discord</a></td>
     <td>We have a public Discord server that anyone can join. This is where all our developers and contributors hang out and where we make announcements</td>
   </tr>
-
-  <tr>
-    <td><a href="https://twitter.com/ACE3Mod">Twitter</a></td>
-    <td>You can follow our Twitter account to get updates and various links to guides</td>
-  </tr>
-  <tr>
-    <td><a href="https://www.facebook.com/ACE3Mod">Facebook</a></td>
-    <td>You can follow our Facebook account to get updates and various links to guides</td>
-  </tr>
-
-  <tr>
-    <td><a href="https://forums.bistudio.com/topic/181341-ace3-a-collaborative-merger-between-agm-cse-and-ace/?p=2859670">Bohemia Forum</a></td>
-    <td>We have a dedicated thread on the Bohemia Forums for the ACE3 project</td>
-  </tr>
 </table>
 
 ## License
