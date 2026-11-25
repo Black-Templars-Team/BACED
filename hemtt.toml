@@ -1,6 +1,6 @@
-name = "ACE3"
+name = "BACED"
 prefix = "ace"
-author = "ACE-Team"
+author = "BACED-Team"
 files = [
     "*.dll",
     "*.so",
@@ -11,7 +11,7 @@ files = [
     "docs/README.zh-TW.md",
     "AUTHORS.txt",
     "LICENSE",
-    "logo_ace3_ca.paa",
+    "logo_baced_ca.paa",
     "meta.cpp"
 ]
 
@@ -19,7 +19,7 @@ keyname = "{{prefix}}_{{version}}"
 signame = "{{prefix}}_{{version}}-{{git \"id 8\"}}"
 
 releasebuild = [
-    "@zip ace3_{{semver.major}}.{{semver.minor}}.{{semver.patch}}"
+    "@zip baced_{{semver.major}}.{{semver.minor}}.{{semver.patch}}"
 ]
 
 [header_exts]
