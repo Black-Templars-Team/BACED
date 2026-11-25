@@ -94,4 +94,42 @@ When editing an **override** of an ACE function (`addons/<addon>/ace_<component>
 
 ## Bohemia Interactive Code Optimisation rules
 
-**Not filled in yet.** The page is behind a Cloudflare check that blocks automated access, so its content could not be read. Until it's added here, apply the ACE3 performance rules above and ask the user before relying on anything else from the page. To fill this in, paste or save the page's text and have Claude summarise it into this section.
+Source: https://community.bistudio.com/wiki/Code_Optimisation (revision 378687). Its timings were measured on Arma 3 1.82 and are relative, not absolute.
+
+### Principles
+- Order of work: **make it work, make it readable, then optimise** ("premature optimisation is the root of all evil"). Every rule is a rule of thumb; don't contort good structure to satisfy one rule.
+- Code must not throw errors (test with `-showScriptErrors`, read the RPT).
+- Readable over short: descriptive camelCase names (`_uniform`, not `_u`), spacing and line breaks, no dense one-liners, intermediate variables for clarity. Repeated code with different parameters becomes a function; long functions get split; long `if`/`else` chains may become a `switch` or smaller functions.
+- Repeated hard-coded constants become `#define`s (no semicolon), not variables.
+- Prefer private over global variables. Don't iterate the same array several times when once will do. Never `execVM` the same file repeatedly; compile once (BACED: `PREP`).
+- In a loop, copy a global you read repeatedly into a private first.
+
+### Preferred forms (fast vs slow)
+- Choosing between two values: `[falseValue, trueValue] select _cond` over `if ... then {} else {}`.
+- Lazy evaluation: `a && {b} && {c}` skips the rest once a condition fails; use it when later conditions are expensive. It is slower when the cheap first condition rarely decides the result, and brace placement changes semantics (`a && {b || {c}}` is not `a && {b} || {c}`), so group deliberately.
+- Building big strings: `pushBack` pieces into an array, then `joinString ""` (≈10x faster than repeated `+`). For a few short strings, `+` is fine; `format` is limited to ~8 KB.
+- `str x` over `format ["%1", x]`.
+- Arrays: `pushBack`/`append` to add; `deleteAt`/`deleteRange` to remove (not `set` + `- [objNull]`); `isEqualTo []` for emptiness; `select {}` for filtering, `apply {}` for mapping, `arrayIntersect` for common items, `selectRandom` / `selectRandomWeighted`.
+- Iteration: `for "_i" from a to b` is ~2x faster than `forEach` when `_x` is not needed, and ~2x faster than `for [{},{},{}]`. `count {}` is marginally faster than `forEach` but only if the code already returns a Boolean/nothing. To find the first match use `findIf` (stops early), not `forEach` + `exitWith` or `count`.
+- `"x" in array/string` over `find ... > -1`.
+- `isNil "varName"` over `isNil {varName}`.
+- `isEqualType` over `typeName ==`.
+- `select` over `param` when the value can't be missing or wrong-typed. Use `params`/`param` (never `BIS_fnc_param`) for function arguments.
+- `isNull objectParent _unit` over `vehicle _unit == _unit`.
+- `nearEntities` over `nearestObjects` (especially beyond 100 m), but it only returns alive units on foot and vehicles.
+- `createSimpleObject` with a model path when the object needs no simulation (~40x faster than `createVehicle`); with `createVehicle`, `"CAN_COLLIDE"` avoids the expensive empty-position search.
+- Positions: `getPosWorld`/`getPosASL`/`getPosATL` over `getPos`/`position` (up to 10x slower); `setPosWorld`/`setPosASL`/`setPosATL` over `setPos`/`setVehiclePosition` with `"NONE"`.
+- Config paths: `>>` over `/`; store a reused config path in a variable (`private _cfgVehicles = configFile >> "CfgVehicles"`).
+- `toLowerANSI`/`toUpperANSI` over `toLower`/`toUpper` for ASCII-only strings (e.g. classnames).
+- Key-value data: hashmaps (`createHashMapFromArray`, `get`, `set`) over `[[keys], [values]]`, and especially over `[[key, value], ...]` searched with `findIf`.
+- Engine commands over legacy BIS functions: `vectorMultiply`, `linearConversion`, `isEqualTo`, `remoteExec`/`remoteExecCall` (never `BIS_fnc_MP`), `splitString`/`joinString`, string `select`.
+- `private _a = 1;` (declare and assign) over `private ["_a"]; _a = 1;`. Exception: a variable reassigned on every iteration of a hot loop is cheaper declared once outside the loop.
+
+### Scheduling and multiplayer
+- Scheduled code is suspended after 3 ms and runs slower; unscheduled code runs to completion but cannot `sleep`/`waitUntil`. Use unscheduled for time-critical code.
+- Don't flood the network: no high-frequency `publicVariable` or public `setVariable`; keep their variable names short but meaningful. Do the work on the server and send only results; use `remoteExec`/`remoteExecCall` (BACED/ACE: CBA events).
+
+### Where these meet the ACE3 rules
+- ACE3 wins on: `private` at the smallest feasible scope (use the declare-outside-the-loop trick only in hot loops, with a comment); passing data as arguments (don't rely on `call` without arguments inheriting the caller's scope, even though it is faster); `CBA_fnc_waitUntilAndExecute`/per-frame handlers instead of scheduled loops.
+- Both agree on: `pushBack`/`append`, `isEqualTo []`, `for ... from ... to`, `params`, `#define` constants, unscheduled code, no repeated `execVM`.
+- In hot paths (per-frame handlers, damage/vitals handlers, large loops) apply the faster forms above. Elsewhere, use them when they are at least as readable.
