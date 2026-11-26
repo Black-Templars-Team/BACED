@@ -9,7 +9,9 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert");
+const {spawnSync} = require("node:child_process");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const M = require("../damage_model.js");
 const {buildPoints} = require("../balance_points.js");
@@ -108,6 +110,22 @@ test("calibration pools torso cycles from all three WB Mk 4 runs", () => {
     within(result.settings.engine_speedCapRatio, 0.75, 1.0);
     within(result.settings.engine_speedExponent, 0.35, 0.8);
     assert.strictEqual(result.settings.engine_blastFalloffEnd, 1.7);
+});
+
+test("calibration CLI runs all three WB Mk 4 fixtures without extracted data", (t) => {
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "damage-sim-test-"));
+    t.after(() => fs.rmSync(dataDir, {recursive: true, force: true}));
+    const result = spawnSync(process.execPath, ["sim.js", "calibrate",
+        "--rpt", "tests/fixtures/battery-wb-mk4.rpt",
+        "--rpt", "tests/fixtures/battery-wb-mk4-apose.rpt",
+        "--rpt", "tests/fixtures/battery-wb-mk4-aim.rpt"], {
+        cwd: path.resolve(__dirname, ".."),
+        env: {...process.env, DAMAGE_SIM_DATA_DIR: dataDir},
+        encoding: "utf8",
+    });
+    assert.ifError(result.error);
+    assert.strictEqual(result.status, 0, result.stderr);
+    assert.match(result.stdout, /latest RUN from each of 3 RPTs/);
 });
 
 test("A-pose calibration aligns torso and leg selections and recovers spread defaults", {skip: !haveData || !geometry}, () => {
@@ -348,6 +366,37 @@ test("AI unit selects its configured loadout and uses AI medical rules", opts, (
 
 const EXPLOSIVE = {ammo: {hit: 90, indirectHit: 120, indirectHitRange: 2, explosive: 1}};
 
+test("Rounds that expire before reaching the target are misses for direct hits and blast", () => {
+    const fixture = require("./fixtures/sample-data.json");
+    const bench = {...fixture,
+        weapons: {Bench: {muzzles: [{name: "this", initSpeed: 0, magazines: ["BenchMag"]}]}},
+        magazines: {BenchMag: {initSpeed: 850, ammo: "BenchRound"}},
+        ace: {
+            damageTypes: {unknown: {woundHandlers: [["ace_medical_damage_woundsHandlerBase"]], thresholds: [[0, 0], [1, 1]],
+                wounds: {testWound: {weighting: [[0, 1]], damageMultiplier: 1, sizeMultiplier: 1, painMultiplier: 1, bleedingMultiplier: 1}}}},
+            wounds: {testWound: {pain: 1, bleeding: 1}},
+        },
+    };
+    const sc = {weapon: "Bench", mode: "vanilla", target: "ai", loadout: {uniform: "BenchUniform"},
+        distance: 100, pellets: 2, samples: 2, runs: 4, maxShots: 4, overrides: EXPLOSIVE};
+    for (const impact of ["HitChest", "Blast"]) {
+        const live = {...sc, impact};
+        assert.strictEqual(M.simulate(bench, live).stats.pWound, 1);
+        assert.ok(Number.isInteger(M.shotsToKill(bench, live).shots50));
+
+        const expired = {...live, overrides: {ammo: {...EXPLOSIVE.ammo, timeToLive: 0.01}}};
+        const result = M.simulate(bench, expired);
+        assert.strictEqual(result.ballistics.outOfRange, true);
+        assert.strictEqual(result.stats.pHit, 0);
+        assert.strictEqual(result.stats.pWound, 0);
+        assert.deepStrictEqual(result.traceShots.map((shot) => shot.hit), [false, false]);
+        assert.ok(result.trace.some((entry) => entry.text === "the round expires (timeToLive) before reaching the target"));
+        const down = M.shotsToKill(bench, expired);
+        assert.strictEqual(down.pHit, 0);
+        assert.strictEqual(down.shots50, null);
+    }
+});
+
 test("Direct explosive hits fold splash into the final damage cycle with the suit off", opts, () => {
     const sc = base({samples: 20, traceHit: 1, pellets: 1, overrides: EXPLOSIVE, blastDistance: 20});
     const off = M.simulate(data, {...sc, mode: "vanilla"});
@@ -418,6 +467,41 @@ test("weapon balancing: labels distinguish classes without splitting identical s
         [["Pistol_Secondary"], "secondary slot", "Default"],
         [["Pistol_LSLOT"], "launcher slot", "Single"],
     ]);
+});
+
+function magazineBalanceFixture(second = {}) {
+    const first = {ammo: "Round", count: 8, initSpeed: 100};
+    return {
+        weapons: {Pistol: {displayName: "Pistol", muzzles: [{name: "this", magazines: ["First", "Second"], modes: []}]}},
+        magazines: {First: first, Second: {...first, ...second}},
+        ammo: {Round: {hit: 1}},
+    };
+}
+const magazineBalanceRoster = {classes: {Pistol: [{generation: "Firstborn", cert: "Tactical", acquisition: "default"}]},
+    otherMods: [], certs: {Firstborn: ["Tactical"]}};
+
+test("weapon balancing: magazines with the same ammo but different capacities are distinct", () => {
+    const points = buildPoints(magazineBalanceFixture({count: 16}), magazineBalanceRoster);
+    assert.deepStrictEqual(points.map((p) => p.magazine), ["First", "Second"]);
+});
+
+test("weapon balancing: a magazine speed edit splits an alias without changing the unedited point", () => {
+    const fixture = magazineBalanceFixture();
+    const original = buildPoints(fixture, magazineBalanceRoster);
+    assert.deepStrictEqual(original.map((p) => p.magazine), ["First"]);
+    const edited = buildPoints(fixture, magazineBalanceRoster, {magazineByClass: {Second: {initSpeed: 200}}});
+    assert.deepStrictEqual(edited.map((p) => p.magazine), ["First", "Second"]);
+    assert.strictEqual(edited[0].id, original[0].id);
+    assert.notStrictEqual(edited[1].id, original[0].id);
+    assert.deepStrictEqual(buildPoints(fixture, magazineBalanceRoster), original);
+});
+
+test("weapon balancing: ammo class edits affect whether a submunition point does damage", () => {
+    const fixture = magazineBalanceFixture();
+    fixture.ammo = {Round: {hit: 1, submunitionAmmo: ["Pellet"]}, Pellet: {hit: 1}};
+    assert.strictEqual(buildPoints(fixture, magazineBalanceRoster).length, 1);
+    assert.deepStrictEqual(buildPoints(fixture, magazineBalanceRoster, {ammoByClass: {Round: {hit: 0}}}), []);
+    assert.strictEqual(buildPoints(fixture, magazineBalanceRoster, {ammoByClass: {Round: {hit: 0}, Pellet: {hit: 1}}}).length, 1);
 });
 
 test("weapon balancing: extracted missile launcher classes have distinct variants and player-facing mode labels",

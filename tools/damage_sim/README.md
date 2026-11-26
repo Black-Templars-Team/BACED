@@ -17,12 +17,16 @@ Two front ends share one model (`damage_model.js`):
 hemtt build                 # run at the repo root to build BACED's medical and ammo compatibility PBOs
 cd tools/damage_sim
 python3 extract.py          # read Arma 3, preset mods and BACED -> data/game_data.json (about 15 s, 60 s on a cold cache)
-python3 build_page.py       # -> data/page_data.js, data/roster.js, data/ace_body_images.js, data/server_settings.json, index.html
+python3 build_page.py       # -> data/page_data.js, data/roster.js, data/ace_body_images.js, index.html
                             #    (--refresh-sheets downloads the cert and relic sheets again)
 xdg-open index.html         # or open it in any browser
 
 node sim.js run --weapon BT_TyrianBolter --distance 100 --trace
 ```
+
+`build_page.py --server-settings FILE` imports settings for both the page and CLI; a missing file aborts without writing anything.
+Without a flag, it imports `~/Downloads/message.txt` if present, otherwise reuses `server_settings.json` beside `game_data.json` or uses mod defaults if neither exists.
+`build_page.py --mod-defaults` ignores the export and removes the saved settings so both front ends use mod defaults.
 
 Rerun both Python steps after a mod update, a preset change or a new server settings export.
 Rebuild BACED first after changing its addons. `extract.py --baced DIR` reads PBOs directly from `DIR`

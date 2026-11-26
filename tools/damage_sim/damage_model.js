@@ -1218,6 +1218,11 @@
             }
             ctx.shots.push(sample);
             if (count > 1) ctx.note("event", "projectile " + (i + 1) + " of " + count);
+            if (prep.flight.outOfRange) {
+                sample.hit = false;
+                ctx.note("ballistics", "the round expires (timeToLive) before reaching the target");
+                continue;
+            }
             if (!sample.hit) {
                 ctx.note("geometry", sample.blockedSelection ? ceilingMessage(prep, sample.blockedSelection)
                     : "miss: the round passes beside the body");

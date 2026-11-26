@@ -146,15 +146,23 @@ def resolve_base(node):
     return None
 
 
+def _resolve_value(node, prop, value):
+    if isinstance(value, tuple) and value and value[0] == "__append__":
+        _, additions, prev = value
+        if prev is None:
+            prev = lookup(resolve_base(node), prop, [])
+        else:
+            prev = _resolve_value(node, prop, prev)
+        return list(prev or []) + additions
+    return value
+
+
 def lookup(node, prop, default=None, with_src=False):
     seen = 0
     while node is not None and seen < 128:
         low = prop.lower()
         if low in node.props:
-            value = node.props[low]
-            if isinstance(value, tuple) and value and value[0] == "__append__":
-                inherited = lookup(resolve_base(node), prop, [], False)
-                value = list(inherited or []) + value[1]
+            value = _resolve_value(node, prop, node.props[low])
             return (value, node.src.get(low)) if with_src else value
         node = resolve_base(node)
         seen += 1

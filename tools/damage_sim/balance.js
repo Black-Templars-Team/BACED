@@ -38,11 +38,10 @@
     // ------------------------------------------------------------------ certs and colours
     const certs = buildCerts(R).map((c) => ({...c, color: c.gen === RELIQUARY ? "var(--ink)" : `var(--s${(c.index % SLOTS) + 1})`}));
     const certByKey = Object.fromEntries(certs.map((c) => [c.key, c]));
-    const POINTS = buildPoints(D, R);
+    let POINTS = [];
 
     // Other mods: the most frequent get a slot each, the rest share a muted ring
-    const topMods = rankMods(POINTS);
-    const modColor = Object.fromEntries(topMods.map((mod, i) => [mod, i < SLOTS ? `var(--s${i + 1})` : "var(--ink-3)"]));
+    let topMods = [], modColor = {};
     const OTHER_MODS_KEY = "mod:*";
     const modKey = (mod) => (topMods.indexOf(mod) < SLOTS ? `mod:${mod}` : OTHER_MODS_KEY);
 
@@ -69,9 +68,15 @@
     }
     function schedule() {
         const base = baseScenario();
-        const overrides = base.overrides || {};
-        editedClasses = [...new Set([...Object.keys(overrides.ammoByClass || {}), ...Object.keys(overrides.magazineByClass || {})])].sort();
-        currentKey = JSON.stringify([base, state.modDefaults]);
+        const key = JSON.stringify([base, state.modDefaults]);
+        if (key !== currentKey) {
+            const overrides = base.overrides || {};
+            editedClasses = [...new Set([...Object.keys(overrides.ammoByClass || {}), ...Object.keys(overrides.magazineByClass || {})])].sort();
+            POINTS = buildPoints(D, R, overrides);
+            topMods = rankMods(POINTS);
+            modColor = Object.fromEntries(topMods.map((mod, i) => [mod, i < SLOTS ? `var(--s${i + 1})` : "var(--ink-3)"]));
+            currentKey = key;
+        }
         queue = visibleCandidates().filter((p) => !cache.has(currentKey + "#" + p.id))
             .map((p) => ({key: currentKey, point: p, scenario: Object.assign({}, base, {weapon: p.weapon, muzzle: p.muzzle, magazine: p.magazine})}));
         startPool();
@@ -333,6 +338,7 @@
 
     // ------------------------------------------------------------------ render
     let root = null;
+    let chartLayout;
     const viewChoice = () => B.view === "table" ? "table" : "chart";
     function ensureShell() {
         if (root) return;
@@ -430,7 +436,7 @@
         return {W: width, H: tall};
     }
 
-    function renderChart() {
+    function renderChart(gesture = false) {
         if (viewChoice() !== "chart") return [];
         const box = $("balChart");
         const choice = yChoice();
@@ -455,21 +461,27 @@
         const sy = (y) => padT + (1 - (y - view.y0) / (view.y1 - view.y0)) * plotH;
         const xTitleText = `Time to 50% ${outcomeWord()} (${B.logTime ? "log(1 + s)" : "s"})`;
         const yTitleText = choice === "magazines" && B.outcome === "dead" ? "Magazines to dead" : Y_LABELS[choice];
-        const chart = svg("svg", {viewBox: `0 0 ${W} ${H}`, width: W, height: H, tabindex: 0, role: "application",
-            "aria-label": `Scatter plot. X axis: ${xTitleText}. Y axis: ${yTitleText}.` +
-                strips.map(({label}) => ` ${label.join(" ")} strip.`).join("") + " Arrow keys step through the marks."});
+        // Keep the SVG itself mounted so redraws preserve pointer capture and its gesture handlers.
+        const existingChart = box.firstElementChild;
+        const chart = existingChart || svg("svg", {tabindex: 0, role: "application"});
+        chart.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        chart.setAttribute("width", W);
+        chart.setAttribute("height", H);
+        chart.setAttribute("aria-label", `Scatter plot. X axis: ${xTitleText}. Y axis: ${yTitleText}.` +
+            strips.map(({label}) => ` ${label.join(" ")} strip.`).join("") + " Arrow keys step through the marks.");
+        const plot = document.createDocumentFragment();
         const defs = svg("defs");
         const clipId = "bplot";
         const clipRect = svg("clipPath", {id: clipId});
         clipRect.append(svg("rect", {x: padL, y: padT, width: plotW, height: plotH}));
         defs.append(clipRect);
-        chart.append(defs);
+        plot.append(defs);
         const grid = svg("g", {class: "grid"}), axis = svg("g", {class: "axis"});
         if (choice === "acquisition") {
             const band = svg("g", {"clip-path": `url(#${clipId})`});
             for (const i of [0, 2]) band.append(svg("rect", {class: "acquisition-band", x: padL, y: sy(i + 0.5),
                 width: plotW, height: sy(i - 0.5) - sy(i + 0.5)}));
-            chart.append(band);
+            plot.append(band);
         }
         let lastTickX = -Infinity;
         for (const t of B.logTime ? TIME_TICKS : linearTimeTicks(plotW)) {
@@ -502,7 +514,7 @@
         xTitle.textContent = xTitleText;
         const yTitle = svg("text", {class: "axis-title", transform: `translate(14 ${padT + plotH / 2}) rotate(-90)`, "text-anchor": "middle"});
         yTitle.textContent = choice === "acquisition" ? yTitleText : `${yTitleText} (log scale)`;
-        chart.append(grid, axis, xTitle, yTitle);
+        plot.append(grid, axis, xTitle, yTitle);
 
         const marks = svg("g", {"clip-path": `url(#${clipId})`, class: highlight ? "dim" : ""});
         const placed = [], stacks = new Map();
@@ -535,12 +547,12 @@
         // Strip positions are unscaled; the tooltip gives the actual result.
         strips.forEach(({key, label, items: entries}, i) => {
             const left = W - padR + 6 + i * (stripW + 6);
-            chart.append(svg("rect", {class: "scatter-strip", x: left, y: padT, width: stripW, height: plotH}));
+            plot.append(svg("rect", {class: "scatter-strip", x: left, y: padT, width: stripW, height: plotH}));
             label.forEach((text, j) => {
                 const caption = svg("text", {class: "scatter-caption", x: left + stripW / 2,
                     y: padT + 13 + 12 * j, "text-anchor": "middle"});
                 caption.textContent = text;
-                chart.append(caption);
+                plot.append(caption);
             });
             const cols = Math.floor(stripW / 14);
             const rows = Math.ceil(entries.length / cols);
@@ -557,9 +569,9 @@
             if (highlight && matchesHighlight(it.p)) g.classList.add("hl");
             (it.strip ? stripMarks : marks).append(g);
         }
-        chart.append(marks, stripMarks);
+        plot.append(marks, stripMarks);
         const active = placed.find((q) => q.p.id === (pinnedId || hoverId || focusId));
-        if (active) chart.append(svg("circle", {class: "focus-ring", cx: active.cx, cy: active.cy, r: MARK_R + 4}));
+        if (active) plot.append(svg("circle", {class: "focus-ring", cx: active.cx, cy: active.cy, r: MARK_R + 4}));
 
         const tip = el("div", {class: "tip" + (pinnedId ? " pinned" : ""), hidden: !active || undefined, role: pinnedId ? "dialog" : undefined});
         if (active) {
@@ -572,24 +584,33 @@
             el("button", {type: "button", text: "Reset", onclick: () => { userView = false; render(); }}),
             el("button", {type: "button", text: expanded ? "Close" : "Expand", "aria-pressed": String(expanded), onclick: toggleExpand}),
         ]);
-        box.replaceChildren(chart, tools, tip);
-        const notes = [];
-        if (choice === "consistency") notes.push("Consistency is the 75% shot count divided by the 25% shot count. Closer to 1 means more consistent bursts.");
-        if (choice === "acquisition") notes.push("Each weapon is shown in the lowest acquisition tier available under the current filters.");
-        const missingY = timed.filter((it) => it.y == null && tx(it.r.ttk) <= fitted.x1).length;
-        if (missingY) notes.push(`${missingY} ${missingY === 1 ? "mark has" : "marks have"} no ${choice === "acquisition" ? "listed tier" : "value for this measure"}.`);
-        if (beyond.length) notes.push("Time axis fits the fastest 95% of marks; longer times are in Beyond.");
-        if (strips.length) notes.push("Strip positions are not on either scale. Select a mark for its result.");
-        $("balChartNote").textContent = notes.join(" ");
-        $("balChartNote").hidden = !notes.length;
-        if (active) placeTip(tip, chart, active, W);
+        if (existingChart) {
+            chart.nextElementSibling.replaceWith(tools);
+            tools.nextElementSibling.replaceWith(tip);
+        } else {
+            box.append(chart, tools, tip);
+            wireChart(chart);
+        }
+        if (!gesture) {
+            const notes = [];
+            if (choice === "consistency") notes.push("Consistency is the 75% shot count divided by the 25% shot count. Closer to 1 means more consistent bursts.");
+            if (choice === "acquisition") notes.push("Each weapon is shown in the lowest acquisition tier available under the current filters.");
+            const missingY = timed.filter((it) => it.y == null && tx(it.r.ttk) <= fitted.x1).length;
+            if (missingY) notes.push(`${missingY} ${missingY === 1 ? "mark has" : "marks have"} no ${choice === "acquisition" ? "listed tier" : "value for this measure"}.`);
+            if (beyond.length) notes.push("Time axis fits the fastest 95% of marks; longer times are in Beyond.");
+            if (strips.length) notes.push("Strip positions are not on either scale. Select a mark for its result.");
+            $("balChartNote").textContent = notes.join(" ");
+            $("balChartNote").hidden = !notes.length;
+        }
         if (!placed.length && !items.length) {
             const empty = svg("text", {x: padL + plotW / 2, y: H / 2, "text-anchor": "middle", class: "axis-title"});
             empty.textContent = queue.length ? "Working out the first weapons…" : results.length
                 ? "No marks have a value for this measure." : "No weapon matches the filters.";
-            chart.append(empty);
+            plot.append(empty);
         }
-        wireChart(chart, placed, {padL, padR, padT, padB, W, H});
+        chartLayout = {placed, padL, padR, padT, padB, W, H};
+        chart.replaceChildren(plot);
+        if (active) placeTip(tip, chart, active, W);
         return placed;
     }
 
@@ -605,32 +626,35 @@
         tip.style.top = Math.max(0, Math.min(boxH - h, top)) + "px";
     }
 
-    function zoomBy(factor, fx, fy) {
+    function zoomBy(factor, fx, fy, gesture = false) {
         if (!view) return;
         userView = true;
         const cx = view.x0 + fx * (view.x1 - view.x0), cy = view.y1 - fy * (view.y1 - view.y0);
         view = {x0: cx - (cx - view.x0) * factor, x1: cx + (view.x1 - cx) * factor, y0: cy - (cy - view.y0) * factor, y1: cy + (view.y1 - cy) * factor};
-        render();
+        if (gesture) renderChart(true);
+        else render();
     }
 
-    function wireChart(chart, placed, frame) {
-        const {padL, padR, padT, padB, W, H} = frame;
+    function wireChart(chart) {
         const pointers = new Map();
         let drag = null, moved = false, pinch = null;
         const local = (e) => {
+            const {W, H} = chartLayout;
             const rect = chart.getBoundingClientRect();
             return {x: (e.clientX - rect.left) * (W / rect.width), y: (e.clientY - rect.top) * (H / rect.height)};
         };
         const nearest = (pt) => {
             let best = null, bestD = PICK_RADIUS * PICK_RADIUS;
-            for (const q of placed) {
+            for (const q of chartLayout.placed) {
                 const d = (q.cx - pt.x) ** 2 + (q.cy - pt.y) ** 2;
                 if (d < bestD) { bestD = d; best = q; }
             }
             return best;
         };
-        const fraction = (pt) => ({fx: Math.max(0, Math.min(1, (pt.x - padL) / (W - padL - padR))),
-            fy: (pt.y - padT) / (H - padT - padB)});
+        const fraction = (pt) => {
+            const {padL, padR, padT, padB, W, H} = chartLayout;
+            return {fx: Math.max(0, Math.min(1, (pt.x - padL) / (W - padL - padR))), fy: (pt.y - padT) / (H - padT - padB)};
+        };
         chart.addEventListener("wheel", (e) => {
             e.preventDefault();
             const {fx, fy} = fraction(local(e));
@@ -645,29 +669,32 @@
                 const [a, b] = [...pointers.values()];
                 pinch = {dist: Math.hypot(a.x - b.x, a.y - b.y), view: Object.assign({}, view), mid: {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2}};
                 drag = null;
+                chart.classList.remove("panning");
             }
         });
         chart.addEventListener("pointermove", (e) => {
             const pt = local(e);
-            if (pointers.has(e.pointerId)) pointers.set(e.pointerId, pt);
-            if (pinch && pointers.size === 2) {
+            const tracked = pointers.has(e.pointerId);
+            if (tracked) pointers.set(e.pointerId, pt);
+            if (tracked && pinch && pointers.size === 2) {
                 const [a, b] = [...pointers.values()];
                 const factor = pinch.dist / Math.max(1, Math.hypot(a.x - b.x, a.y - b.y));
                 const {fx, fy} = fraction(pinch.mid);
                 view = Object.assign({}, pinch.view);
                 moved = true;
-                zoomBy(factor, fx, fy);
+                zoomBy(factor, fx, fy, true);
                 return;
             }
-            if (drag) {
+            if (tracked && drag) {
                 const dx = pt.x - drag.start.x, dy = pt.y - drag.start.y;
                 if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
                 if (moved) {
                     userView = true;
                     chart.classList.add("panning");
+                    const {padL, padR, padT, padB, W, H} = chartLayout;
                     const kx = (drag.view.x1 - drag.view.x0) / (W - padL - padR), ky = (drag.view.y1 - drag.view.y0) / (H - padT - padB);
                     view = {x0: drag.view.x0 - dx * kx, x1: drag.view.x1 - dx * kx, y0: drag.view.y0 + dy * ky, y1: drag.view.y1 + dy * ky};
-                    render();
+                    renderChart(true);
                 }
                 return;
             }
@@ -678,10 +705,14 @@
             }
         });
         const end = (e) => {
+            if (!pointers.has(e.pointerId)) return;
             const wasTap = pointers.size === 1 && !moved && !pinch;
             pointers.delete(e.pointerId);
             if (pointers.size < 2) pinch = null;
-            if (!pointers.size) drag = null;
+            if (!pointers.size) {
+                drag = null;
+                chart.classList.remove("panning");
+            }
             if (wasTap && e.type === "pointerup") {
                 const hit = nearest(local(e));
                 pinnedId = hit && hit.p.id !== pinnedId ? hit.p.id : null;
@@ -691,9 +722,10 @@
         };
         chart.addEventListener("pointerup", end);
         chart.addEventListener("pointercancel", end);
+        chart.addEventListener("lostpointercapture", end);
         chart.addEventListener("pointerleave", () => { if (hoverId && !pinnedId) { hoverId = null; renderChart(); } });
         chart.addEventListener("keydown", (e) => {
-            const order = placed.slice().sort((a, b) => a.cx - b.cx || a.cy - b.cy);
+            const order = chartLayout.placed.slice().sort((a, b) => a.cx - b.cx || a.cy - b.cy);
             if (!order.length) return;
             const i = order.findIndex((q) => q.p.id === (pinnedId || focusId));
             if (e.key === "ArrowRight" || e.key === "ArrowLeft") {

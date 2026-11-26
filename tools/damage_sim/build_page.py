@@ -29,6 +29,8 @@ SETTING_SKIP = ("ace_medical_gui_", "ace_medical_treatment_", "ace_medical_feedb
 
 
 def game_data_path():
+    if data_dir := os.environ.get("DAMAGE_SIM_DATA_DIR"):
+        return Path(data_dir).resolve() / "game_data.json"
     local = Path(HERE) / "data" / "game_data.json"
     if local.is_file():
         return local
@@ -49,7 +51,7 @@ def game_data_path():
     if not game_data.is_file():
         return local
 
-    # Seed missing optional inputs, but keep the build outputs in this worktree.
+    # Seed missing optional inputs for the page in this worktree.
     inputs = [Path("data/body_geometry.js")]
     inputs.extend(p.relative_to(shared) for p in (shared / ".cache/sheets").glob("*.csv"))
     for relative in inputs:
@@ -140,21 +142,38 @@ def ace_body_images(out_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--server-settings", default=os.path.expanduser("~/Downloads/message.txt"),
-                        help="exported cba_settings.sqf used as the page's default settings")
+    settings = parser.add_mutually_exclusive_group()
+    settings.add_argument("--server-settings", type=Path,
+                          help="exported cba_settings.sqf used by the page and CLI (default: ~/Downloads/message.txt)")
+    settings.add_argument("--mod-defaults", action="store_true",
+                          help="remove saved server settings and use mod defaults for the page and CLI")
     parser.add_argument("--refresh-sheets", action="store_true",
                         help="download the roster sheets again instead of using .cache/sheets/")
     args = parser.parse_args()
+    if args.server_settings is not None and not args.server_settings.is_file():
+        parser.error(f"server settings export is not a file: {args.server_settings}")
+
     source = game_data_path()
     with source.open() as f:
         data = json.load(f)
     os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
+    # The CLI reads its saved settings alongside the extracted game data.
+    saved = source.with_name("server_settings.json")
+    export = args.server_settings or Path.home() / "Downloads/message.txt"
     server = {}
-    if os.path.exists(args.server_settings):
-        server = cs.parse_cba_settings_file(open(args.server_settings, encoding="utf-8", errors="replace").read())
-        with open(os.path.join(HERE, "data", "server_settings.json"), "w") as f:
+    if args.mod_defaults:
+        saved.unlink(missing_ok=True)
+        print("server settings: both the page and CLI use mod defaults (--mod-defaults)")
+    elif args.server_settings is not None or export.is_file():
+        server = cs.parse_cba_settings_file(export.read_text(encoding="utf-8", errors="replace"))
+        with saved.open("w") as f:
             json.dump(server, f, indent=1)
-        print(f"server settings: {len(server)} values from {args.server_settings}")
+        print(f"server settings: {len(server)} values from {export}")
+    elif saved.is_file():
+        server = json.loads(saved.read_text())
+        print(f"server settings: reused {len(server)} saved values from {saved}")
+    else:
+        print("server settings: no export or saved settings; both the page and CLI use mod defaults")
     full_scripts = data.get("damageScripts", [])
     data = trim(data)
     baced = data.get("baced")

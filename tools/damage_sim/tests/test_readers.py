@@ -65,6 +65,31 @@ class TextConfig(unittest.TestCase):
         self.assertIsNone(root.get("A"))
         self.assertEqual(root.get("B").get("y"), 2)
 
+    def test_array_append_keeps_own_value(self):
+        root = extract.Node("")
+        extract.merge(root, ac.parse_text('''
+            class Base { magazines[] = {"Inherited"}; };
+            class Weapon: Base { magazines[] = {"Original"}; };
+        '''), "original")
+        extract.merge(root, ac.parse_text('class Weapon { magazines[] += {"Extra"}; };'), "patch")
+        self.assertEqual(extract.lookup(root.child("Weapon"), "magazines"), ["Original", "Extra"])
+
+    def test_successive_array_appends_keep_earlier_additions(self):
+        root = extract.Node("")
+        extract.merge(root, ac.parse_text('class Weapon { magazines[] = {"Original"}; };'), "original")
+        extract.merge(root, ac.parse_text('class Weapon { magazines[] += {"First"}; };'), "first")
+        extract.merge(root, ac.parse_text('class Weapon { magazines[] += {"Second"}; };'), "second")
+        self.assertEqual(extract.lookup(root.child("Weapon"), "magazines"), ["Original", "First", "Second"])
+
+    def test_array_append_uses_inherited_value_without_own_value(self):
+        root = extract.Node("")
+        extract.merge(root, ac.parse_text('''
+            class Base { magazines[] = {"Inherited"}; };
+            class Weapon: Base {};
+        '''), "original")
+        extract.merge(root, ac.parse_text('class Weapon { magazines[] += {"Extra"}; };'), "patch")
+        self.assertEqual(extract.lookup(root.child("Weapon"), "magazines"), ["Inherited", "Extra"])
+
 
 class BacedAddons(unittest.TestCase):
     def test_wound_names_use_english_in_size_order_for_exported_classes(self):

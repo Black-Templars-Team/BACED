@@ -40,9 +40,20 @@
     }
 
     // Colour variants and copies with identical stats collapse into one point.
-    function buildPoints(gameData, roster) {
-        const {weapons, magazines, ammo} = gameData;
+    function buildPoints(gameData, roster, {ammoByClass, magazineByClass} = {}) {
+        const {weapons} = gameData;
         const bySig = new Map();
+        const candidates = new Map();
+        const overrides = ammoByClass || magazineByClass ? {ammoByClass, magazineByClass} : undefined;
+        const damagingMagazine = (name) => {
+            if (!candidates.has(name)) {
+                // Resolve each magazine's edits in isolation: a carrier's patch can also affect its submunition.
+                const {magazines, ammo} = overrides ? M.applyOverrides(gameData, {magazine: name, overrides}) : gameData;
+                const mag = magazines[name];
+                candidates.set(name, mag && doesDamage(ammo, mag.ammo) ? mag : null);
+            }
+            return candidates.get(name);
+        };
         const add = (cls, memberships) => {
             const w = weapons[cls];
             if (!w) return;
@@ -51,11 +62,9 @@
                 const modeName = mode && mode.name;
                 const muzzleDisplay = muzzle.displayName === "this" ? "" : muzzle.displayName;
                 const modeLabel = (modeName !== "this" && modeName) || muzzleDisplay || "Default";
-                const seenAmmo = new Set();
                 for (const magName of muzzle.magazines) {
-                    const mag = magazines[magName];
-                    if (!mag || seenAmmo.has(mag.ammo) || !doesDamage(ammo, mag.ammo)) continue;
-                    seenAmmo.add(mag.ammo);
+                    const mag = damagingMagazine(magName);
+                    if (!mag) continue;
                     const sig = [baseName(w.displayName), muzzle.name === "this" ? "" : baseName(muzzle.displayName || muzzle.name),
                         mag.ammo, mag.count, mag.initSpeed, muzzle.initSpeed, mode ? mode.reloadTime : 0, mode ? mode.dispersion : 0,
                         muzzle.magazineReloadTime || 0].join("|");
@@ -69,8 +78,9 @@
                     for (const m of memberships) {
                         if (!p.memberships.some((x) => certKey(x) === certKey(m) && x.acquisition === m.acquisition)) p.memberships.push(m);
                     }
-                    // A roster class names the point, not an unlisted colour variant.
-                    if (!p.weapon || (memberships.length && p.memberships.length === memberships.length)) {
+                    // Prefer a roster class, but keep the first identical magazine on its muzzle.
+                    if (!p.weapon || (memberships.length && p.memberships.length === memberships.length &&
+                        (p.weapon !== cls || p.muzzle !== muzzle.name))) {
                         Object.assign(p, {weapon: cls, muzzle: muzzle.name, magazine: magName, name: w.displayName, mod: w.mod || "",
                             muzzleName: muzzle.name === "this" ? "" : (muzzle.displayName || muzzle.name), magazineName: mag.displayName, modeLabel});
                     }

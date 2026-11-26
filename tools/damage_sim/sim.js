@@ -233,7 +233,7 @@ function main() {
             const records = rptPaths.map((file) => calibration.parseRpt(fs.readFileSync(file, "utf8")));
             const fixtures = path.join(__dirname, "tests", "fixtures");
             const sample = rptPaths.every((file) => path.resolve(file) === path.join(fixtures, "sample.rpt"));
-            const battery = rptPaths.every((file) => ["battery-wb-mk4.rpt", "battery-wb-mk4-apose.rpt"]
+            const battery = rptPaths.every((file) => ["battery-wb-mk4.rpt", "battery-wb-mk4-apose.rpt", "battery-wb-mk4-aim.rpt"]
                 .some((name) => path.resolve(file) === path.join(fixtures, name)));
             // The battery fixture has a minimal snapshot of its effective torso armor and ammo.
             const fixtureData = sample ? "sample-data.json" : battery && !fs.existsSync(DATA) ? "battery-wb-mk4-data.json" : null;
