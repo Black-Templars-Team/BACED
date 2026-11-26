@@ -1,0 +1,15 @@
+{
+  "ammo": {"CTR_Bolt_Round": {"hit": 80, "typicalSpeed": 720, "indirectHitRange": 0.3}},
+  "gear": {
+    "uniforms": {"30k_Steve_Armour_MK_4_WB": {"unitClass": "30k_Steve_Tactical_Legionary_MK_4_WB"}},
+    "units": {"30k_Steve_Tactical_Legionary_MK_4_WB": {"armor": 1, "hitpoints": {
+      "HitChest": {"armor": 140, "name": "spine3"},
+      "HitDiaphragm": {"armor": 140, "name": "spine2"},
+      "HitAbdomen": {"armor": 90, "name": "spine1"},
+      "HitPelvis": {"armor": 290, "name": "pelvis"}
+    }}},
+    "vests": {"30k_Steve_Pauldron_MK_4_WB": {}},
+    "helmets": {"30k_Steve_Helmet_MK_4_WB": {}},
+    "backpacks": {}
+  }
+}

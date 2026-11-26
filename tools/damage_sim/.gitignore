@@ -1,0 +1,4 @@
+data/
+.cache/
+index.html
+__pycache__/
