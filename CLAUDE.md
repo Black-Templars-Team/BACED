@@ -23,6 +23,7 @@ When editing an **override** of an ACE function (`addons/<addon>/ace_<component>
 - Config changes to ACE classes go in the BACED addon's config (that addon's `requiredAddons` must include the ACE addon being patched).
 - Stringtable keys for BACED: `STR_BACED_<component>_<name>`.
 - BACED has no call-stack tracing: `CALLSTACK`, `CALLSTACK_NAMED`, `SETVAR`-family and ACE's performance counters exist only inside override files (ACE's macros).
+- Standalone debug-console scripts under `tools/` (e.g. `tools/damage_sim/ingame/calibrate.sqf`) are exempt from the one-function-per-file/PREP, XEH_preInit and no-globals rules; their header must say so.
 
 ## ACE3 Coding Guidelines (adapted to BACED)
 

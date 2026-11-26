@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project name="BACED">
+    <Package name="Medical">
+        <!-- ACE's medical GUI looks wound names up as STR_ACE_Medical_Damage_<Class>[_<Size>],
+             so these keys use ACE's prefix instead of STR_BACED_. -->
+        <Key ID="STR_ACE_Medical_Damage_BoltWound">
+            <English>Bolt Wound</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_BoltWound_Large">
+            <English>Mass-Reactive Wound</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_BoltWound_Medium">
+            <English>Bolt Wound</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_BoltWound_Minor">
+            <English>Minor Bolt Puncture</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_LasBurn">
+            <English>Las Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_LasBurn_Large">
+            <English>Las Perforation</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_LasBurn_Medium">
+            <English>Las Weal</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_LasBurn_Minor">
+            <English>Minor Las Weal</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_MeltaBurn">
+            <English>Melta Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_MeltaBurn_Large">
+            <English>Melta Crater</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_MeltaBurn_Medium">
+            <English>Melta Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_MeltaBurn_Minor">
+            <English>Minor Melta Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_PlasmaBurn">
+            <English>Plasma Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_PlasmaBurn_Large">
+            <English>Large Plasma Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_PlasmaBurn_Medium">
+            <English>Medium Plasma Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_PlasmaBurn_Minor">
+            <English>Minor Plasma Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_VolkiteBurn">
+            <English>Volkite Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_VolkiteBurn_Large">
+            <English>Large Volkite Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_VolkiteBurn_Medium">
+            <English>Medium Volkite Burn</English>
+        </Key>
+        <Key ID="STR_ACE_Medical_Damage_VolkiteBurn_Minor">
+            <English>Minor Volkite Burn</English>
+        </Key>
+    </Package>
+</Project>

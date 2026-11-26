@@ -1,0 +1,214 @@
+# Astartes Wound Bench (damage simulator)
+
+Predicts what a weapon does to a Space Marine player or AI under ACE medical: which wounds, how severe,
+the shot at which he goes down or dies, and why, step by step. It reads the real configs of the BT launcher
+preset and the BT server settings, so balance questions can be answered without booting Arma.
+
+Two front ends share one model (`damage_model.js`):
+
+- **Web page**: `index.html` (opens straight from disk) and [the public GitHub Pages site](https://black-templars-team.github.io/BACED/). Two tabs: **Single
+  weapon** (one weapon against one marine, step by step) and **Weapon balancing** (every cert and relic weapon on
+  one scatter plot, see [docs/PAGE.md](docs/PAGE.md#weapon-balancing-tab)).
+- **Command line**: `node sim.js ...`, for scripts and agents.
+
+## Quick start
+
+```bash
+hemtt build                 # run at the repo root to build BACED's medical and ammo compatibility PBOs
+cd tools/damage_sim
+python3 extract.py          # read Arma 3, preset mods and BACED -> data/game_data.json (about 15 s, 60 s on a cold cache)
+python3 build_page.py       # -> data/page_data.js, data/roster.js, data/ace_body_images.js, index.html
+                            #    (--refresh-sheets downloads the cert and relic sheets again)
+xdg-open index.html         # or open it in any browser
+
+node sim.js run --weapon BT_TyrianBolter --distance 100 --trace
+```
+
+`build_page.py --server-settings FILE` imports settings for both the page and CLI; a missing file aborts without writing anything.
+Without a flag, it imports `~/Downloads/message.txt` if present, otherwise reuses `server_settings.json` beside `game_data.json` or uses mod defaults if neither exists.
+`build_page.py --mod-defaults` ignores the export and removes the saved settings so both front ends use mod defaults.
+
+Rerun both Python steps after a mod update, a preset change or a new server settings export.
+Rebuild BACED first after changing its addons. `extract.py --baced DIR` reads PBOs directly from `DIR`
+instead of the repo's `.hemttout/build/addons/`. Use `--no-baced` to omit the local build. A missing or
+empty default or custom build directory produces a warning and extraction continues without it.
+
+Use **Wound types** in the page's left column to switch both tabs between **BACED 40k** (default) and
+**Original ACE**. Original ACE uses the wound definitions and ammo damage types from the same preset
+without BACED's medical and ammo compat addons. If the export lacks original wound data, the page
+disables the toggle and the CLI falls back to the loaded wound data.
+
+## Publish to GitHub Pages
+
+From the repo root, rebuild and publish the current preset and BT server settings snapshot:
+
+```bash
+hemtt build
+cd tools/damage_sim
+python3 extract.py
+python3 build_page.py
+python3 publish_pages.py --push
+```
+
+Run `python3 publish_pages.py` without `--push` to preview the files in the gitignored `site/` directory.
+The public aim figure uses only the hit-volume outline; the rendered body picture stays on the local page.
+See [docs/PAGE.md](docs/PAGE.md#republishing-to-github-pages) for the branch and Pages settings.
+
+## Requirements
+
+| Tool | Version | Used for |
+|---|---|---|
+| Python | 3.10+, stdlib only | `extract.py`, `build_page.py`, `publish_pages.py`, readers |
+| Node.js | 18+ | `sim.js`, tests |
+| hemtt | 1.22+ on `PATH` | building BACED, preprocessing unbinarized `config.cpp`, converting ACE `.paa` images |
+| Arma 3 + workshop mods | installed through Steam | source data |
+
+Paths default to this machine. On another machine set `ARMA_STEAMAPPS` to the `steamapps` folder that holds
+`common/Arma 3`, `workshop/content/107410` and the launcher presets.
+
+## Command line
+
+```bash
+node sim.js find bolter --kind weapon                 # search weapons, gear, ammo or AI units
+node sim.js find marine --kind unit                   # AI unit classes, for --unit
+node sim.js weapon BT_TyrianBolter                    # muzzles, fire modes, magazines and ammo values
+node sim.js run --weapon BT_TyrianBolter --distance 100 [options]
+node sim.js sweep --weapon BT_TyrianBolter --distances 0,200,400,800 [options]
+node sim.js balance --distance 100 --runs 20 --csv     # compare the cert and relic roster
+node sim.js calibrate --rpt path/to/arma3.rpt [--rpt path/to/another.rpt] [--json]
+```
+
+| Option | Meaning |
+|---|---|
+| `find <text> --kind unit` | search AI units by class, display name, faction name or mod |
+| `calibrate --rpt path [--json]` | fit engine assumptions from the latest run in each RPT; repeat `--rpt` or supply comma-separated paths to pool runs |
+| `--magazine C`, `--muzzle M`, `--fire-mode Name` | what is fired (defaults: first magazine, last player fire mode) |
+| `--distance 100` | range in metres |
+| `--impact HitChest`, `--aim x,y` | aim at a hitpoint, or at a point in model metres (front view) |
+| `--blast-distance N` | metres from the burst to the target with `--impact Blast` (default: 0); no direct hit |
+| `--magazines 1` | burst length in whole magazines (capped at 600 shots) |
+| `--spread 2` | shooter aim error in mrad, on top of weapon dispersion |
+| `--ai` | AI target instead of a player |
+| `--unit C` | AI unit class C from Eden: sets the loadout (uniform, vest, helmet, backpack, from config only) and the AI target |
+| `--stance standing\|crouched` | target stance (`target_stance`; default: `standing`); crouching removes the marine standing ceiling |
+| `--mode auto\|bco\|vanilla` | Black Carapace suit on, off, or on when the uniform is listed |
+| `--wounds baced\|ace` | wound set for `run`, `sweep` and `balance` (default: `baced`) |
+| `--halo none\|bronze\|silver\|gold\|refractor` | Iron Halo tier |
+| `--uniform C --vest C --helmet C --backpack C` | loadout (default: TIOW Mk 7 Black Templars) |
+| `--set name=value`, `--settings file.sqf` | override CBA settings or engine assumptions |
+| `--mod-defaults` | ignore `data/server_settings.json` |
+| `--compare-armor-pen` | also run the burst with `ace_medical_alternateArmorPenetration` flipped and compare median down/dead shots; JSON also includes both curves |
+| `--no-geometry` | ignore the body figure; use the named impact, still subject to the stance rule |
+| `--trace`, `--trace-hit N`, `--view-shot N` | print the step-by-step chain for one shot |
+| `--json` | full result as JSON |
+| `--samples 2000`, `--seed 1` | Monte Carlo size and seed |
+
+`balance` uses the roster generated by `python3 build_page.py` and the same target, aim, range,
+spread, loadout and settings options as `run`. It uses each point's fastest player fire mode.
+Use `--outcome dead` to require death instead of down or dead, `--reload 3` to set the minimum
+magazine reload time in seconds, `--runs 100` to set the burst count per point, and `--other-mods`
+to include unlisted 40k weapons. The default table sorts by median time in seconds, with points
+that do not reach the median within 600 shots last. Unreached percentiles are blank (`null` in JSON).
+Use `--csv` for a header and data rows or `--json` for the array. In both exports, `pHit` is a fraction
+and `magazinesToDown` is the median shot count divided by magazine capacity.
+
+With `--impact Blast`, vanilla blast damage is full through `indirectHitRange`, then falls linearly to zero
+at `indirectHitRange * engine_blastFalloffEnd` (default multiplier: 1.7). Black Carapace uses the configured
+blast damage without falloff whenever the blast reaches the target. On a direct explosive hit, the suit-off
+path applies damage at each reached entry and folds full-strength splash into the final impact. With the suit on,
+Black Carapace processes the direct hit and drops the splash via its same-frame guard.
+
+With the suit off or HUD-only, the engine defaults to a damage scale of 0.91 and a speed exponent of 0.5,
+with direct damage capping at 89% of `typicalSpeed`. With geometry, the round loses
+speed after a limb hit and stops at a torso hit by default (`--set engine_torsoStops=false` restores torso
+speed loss instead). Without geometry, a direct shot has one impact.
+The CLI reports ACE wound events and total event damage per round (including misses), separately from the
+number and severity of injuries created by the wound handlers.
+
+Direct engine-path head impacts damage the face, neck, and head together, using each hitpoint's
+armor. Marine models are classified from their extracted `CfgVehicles.model` path (see [MODEL.md](docs/MODEL.md)).
+Standing geometry is capped at `engine_standingCeiling` (1.90 game model m) without clipping hitpoint
+spheres. Use **Target stance** or `--stance crouched` to remove the cap. With `--no-geometry`, standing
+marine head, face and neck impacts miss. Re-extract and rebuild older bundles to include model paths.
+
+The CLI and Node tests use local `data/` when it contains `game_data.json`. A linked Git worktree without
+local extracted data reuses the main checkout's `data/`. Set `DAMAGE_SIM_DATA_DIR` to use a specific extraction.
+
+## In-game calibration
+
+1. Launch Arma with the mod preset you want to calibrate and run
+   `tools/damage_sim/ingame/calibrate.sqf` in a local Eden preview, following the script's setup instructions.
+   For the first pass, use the CTR Bolt Rifle and an AoD Word Bearers target. Keep the loadout fixed and
+   leave Black Carapace armor mode off for the engine fit.
+2. Log direct hits at several impact speeds, including clean center hits and hits near the shoulders and
+   pauldron edges. Use fresh targets or reset their damage between samples so existing damage does not
+   cap the delta. Collect blast-only samples separately: include one inside `indirectHitRange`, several
+   through the falloff, and a distance at which no damage is recorded.
+3. Let the run finish (`BWB|DONE|`), then share the RPT or the `BWB|` lines from `RUN` through `DONE`.
+   On Windows, Arma RPTs are typically in `%LOCALAPPDATA%\Arma 3`; on Proton, look under the Arma prefix's
+   `drive_c/users/steamuser/AppData/Local/Arma 3`.
+4. Extract data from the same preset, then run `node sim.js calibrate --rpt path/to/arma3.rpt` from
+   `tools/damage_sim`. Use `--json` for the per-shot data. Compare the suggested `--set` values in a
+   `sim.js run`; calibration does not write new defaults.
+
+Hitpoint agreement reports overlap and exact matches per damage cycle and needs matching `data/body_geometry.js`.
+The ray test assumes the target faces the shooter in the geometry's reference pose. Hits with `HitPart`
+but no positive named hitpoint delta and no wound are counted separately. To try the fitter without a game
+installation, run:
+
+```bash
+node sim.js calibrate --rpt tests/fixtures/battery-wb-mk4.rpt --rpt tests/fixtures/battery-wb-mk4-apose.rpt --rpt tests/fixtures/battery-wb-mk4-aim.rpt
+```
+
+The three-run torso fit supplies the engine defaults. The third fixture (`tests/fixtures/battery-wb-mk4-aim.rpt`)
+uses runtime aim points: all 15 chest shots hit `spine3`, but the head shots still missed because the `head`
+selection position is below and in front of the head hit volume, whose top is at model z = 2.27.
+For spread calibration, pass just the A-pose and aim RPTs with the shared marine `data/body_geometry.js`
+and full extracted hitpoint data. The fitted game-to-figure mapping `[-x, z - 1.32, -y]` matches 66.7%
+of selections overall (91.3% torso/legs; 0% arms). Ray/no falloff and radius scale 1.25 give 68.0%
+torso/leg damage-weighted overlap. The bundled snapshot supports the torso speed and blast fits without
+the full extraction.
+
+The follow-up `tests/fixtures/battery-wb-mk4-headprobe.rpt` recorded only six nonlethal standing
+grazes in 112 shots at the ~1.90 m ceiling. `tests/fixtures/battery-wb-mk4-headcrouch.rpt` recorded
+24 lethal clean hits, each damaging all three head hitpoints, with the unhelmeted face taking the
+largest delta and no observed speed dependence from 400 to 1000 m/s.
+
+## Files
+
+| File | Role |
+|---|---|
+| `armaconfig.py` | PBO reader, rapified (binary) and preprocessed text config parsers |
+| `cbasettings.py` | reads CBA setting definitions from SQF and exported `cba_settings.sqf` files |
+| `extract.py` | merges every addon config in engine load order and writes `data/game_data.json` |
+| `build_page.py` | trims the data for the browser, packages ACE's medical menu images, wraps `page.html` |
+| `damage_model.js` | the simulation: ballistics, shot placement, engine damage, ACE, Black Carapace, KAT, state machine |
+| `sim.js` | command-line front end |
+| `calibrate.js` | SQF RPT parser and engine calibration fits |
+| `rosters.py` | reads the BT cert, unlock and Reliquary sheets and matches their weapon names to classes |
+| `roster_overrides.json` | sheet weapon name -> classes, for names the display-name match misses |
+| `page.html`, `app.js` | the web page (artifact source and its script) |
+| `balance.js` | the page's Weapon balancing tab |
+| `index.html` | generated: `page.html` with a document skeleton, for opening from disk |
+| `tests/` | `test_readers.py`, `test_rosters.py` (unittest, sheet copies in `fixtures/sheets/`) and `model.test.js` (node:test) |
+| `data/` | generated, gitignored (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) |
+| `.cache/` | preprocessed text configs, keyed by PBO modification time, and the downloaded sheets (`sheets/`); safe to delete |
+| `.deslop/` | design decisions for the page (UI skill project files) |
+
+## Tests
+
+```bash
+python3 -m unittest discover -s tools/damage_sim/tests
+node --test tools/damage_sim/tests/model.test.js
+```
+
+Tests that need game files or extracted data skip themselves when those are missing. The model tests pin
+values from the BT preset as of 2026-11-25; a mod update can legitimately change them.
+
+## Documentation
+
+- [HANDOFF.md](HANDOFF.md): status, what was verified, open work, decisions.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): data flow, config merge rules, generated file formats.
+- [docs/MODEL.md](docs/MODEL.md): the damage chain step by step, with sources and assumptions.
+- [docs/FINDINGS.md](docs/FINDINGS.md): what the BT modlist and server settings actually do to a marine.
+- [docs/PAGE.md](docs/PAGE.md): how to use and read the web page, and how to republish it.

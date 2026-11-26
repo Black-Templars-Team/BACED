@@ -1,0 +1,2061 @@
+{
+  "_comment": "Generated from the BT preset configs. Each mod becomes addons/compat_<slug>. 'after' lists the slugs of compat addons whose BACED compat addon must load first because this mod re-declares the class (new parent or ACE_damageType).",
+  "mods": [
+    {
+      "name": "Age of Darkness (v1.5)",
+      "slug": "aod",
+      "requiredAddons": [
+        "aod_cont_weapons",
+        "steve_30k_weps",
+        "steve_30k_weps2",
+        "steve_30k_weps3",
+        "steve_30k_weps4",
+        "steve_ass_ram",
+        "steve_speeder_bikes"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Cont_Volkite_Can_Rnd_1",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Flamethrower_FuelSteveEdit",
+          "parent": "Flamethrower_Fuel",
+          "damageType": "burn"
+        },
+        {
+          "class": "SE_Bolt_Rnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_30k_Lascutter_Round",
+          "parent": "Steve_30k_Melta_Round",
+          "damageType": "laser"
+        },
+        {
+          "class": "Steve_30k_Melta_Round",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "melta"
+        },
+        {
+          "class": "Steve_30k_Melta_Round_New",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "melta"
+        },
+        {
+          "class": "Steve_30k_Melta_Round_Pistol",
+          "parent": "Steve_SM_PlasmaPistol_Mag_Rndnew",
+          "damageType": "melta"
+        },
+        {
+          "class": "Steve_30k_MultiMelta_Rnd",
+          "parent": "Steve_30k_Melta_Round",
+          "damageType": "melta"
+        },
+        {
+          "class": "Steve_30k_MULTIMelta_Round_New",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "melta"
+        },
+        {
+          "class": "STEVE_30k_PlasmaCannon_OC_Rnd",
+          "parent": "STEVE_30k_PlasmaCannon_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "STEVE_30k_PlasmaCannon_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_Autocannon60mmHE",
+          "parent": "TIOW_Autocannon60mmHE",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Jetbike_MultiMelta_Round",
+          "parent": "Steve_30k_Melta_Round",
+          "damageType": "melta"
+        },
+        {
+          "class": "Steve_Jetbike_Plasma_Cannon_Round",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_Phob_Atrox_SmBoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Phob_Atrox_SmBoltRound_DF",
+          "parent": "Steve_Phob_Atrox_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Phob_Atrox_SmBoltRound_K",
+          "parent": "Steve_Phob_Atrox_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Phob_SmBoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Phob_SmBoltRound_DF",
+          "parent": "Steve_Phob_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Phob_SmBoltRound_K",
+          "parent": "Steve_Phob_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Rotor_Cannon_Round_new",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Ships_Las_round_rnd",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "Steve_Ships_Las_round_rnd_Vis",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "Steve_SM_Lascannon_Rnd",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "Steve_SM_Overcharge_PlasmagunRound",
+          "parent": "TIOW_SM_Overcharge_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_SM_Overcharge_PlasmaPistol_Rnd",
+          "parent": "Steve_SM_PlasmaPistol_Mag_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_SM_Overcharge_PlasmaPistol_Rndnew",
+          "parent": "Steve_SM_PlasmaPistol_Mag_Rndnew",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_SM_PlasmagunRound",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_SM_PlasmaPistol_Mag_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_SM_PlasmaPistol_Mag_Rndnew",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Steve_Trig_Exitus_SmBoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_Exitus_SmBoltRound_DF",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_Exitus_SmBoltRound_INF",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_Exitus_SmBoltRound_K",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_SmBoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_SmBoltRound_DF",
+          "parent": "Steve_Trig_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_SmBoltRound_INF",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Trig_SmBoltRound_K",
+          "parent": "Steve_Trig_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Umbra_SmBoltRound",
+          "parent": "Steve_Trig_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Volkite_Cav_Rnd",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Steve_Volkite_Cav_RndNew",
+          "parent": "Steve_Volkite_Cav_Rnd",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Steve_Volkite_Charger_Pistol_Rnd",
+          "parent": "Steve_Volkite_Charger_Rnd",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Steve_Volkite_Charger_Rnd",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Steve_Volkite_Charger_RndNew",
+          "parent": "Steve_Volkite_Charger_Rnd",
+          "damageType": "volkite"
+        },
+        {
+          "class": "Steve_Volkite_Culv_Rnd",
+          "parent": "Steve_Volkite_Cav_Rnd",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Armigers Vigilant Reborn",
+      "slug": "avr",
+      "requiredAddons": [
+        "av_dos_pack",
+        "av_dos_vehs",
+        "av_lil_dreads",
+        "av_weapons",
+        "avpack",
+        "nux_equp_addon"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "AV_Bolt_RifleRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_GodwynBolter_Round",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_HB_Hellfire_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_HB_Kraken_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_HB_Metal_Storm_Rnd",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_HB_Vengeance_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_Hellfire_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_HPlasma_Rnd",
+          "parent": "Steve_SM_PlasmaPistol_Mag_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_Kraken_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_Las_Rnd",
+          "parent": "Steve_SM_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "AV_MeltaBomb_Ammo",
+          "parent": "SatchelCharge_Remote_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "AV_Metal_Storm_Rnd",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_Metal_Storm_SubRnd",
+          "parent": "B_762x51_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_OC_HPlasma_Rnd",
+          "parent": "Steve_SM_Overcharge_PlasmaPistol_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_OC_Plasma_Rnd",
+          "parent": "Steve_SM_Overcharge_PlasmaPistol_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_Plasma_Rnd",
+          "parent": "Steve_SM_PlasmaPistol_Mag_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_RagefirePlasmaGun_Overcharged_Rnd",
+          "parent": "TIOW_SM_Overcharge_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_RagefirePlasmaGun_Rnd",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AV_S_Bolt_RifleRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_SM_Bike_BoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_SS_Bolt_RifleRound",
+          "parent": "AV_S_Bolt_RifleRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_StalkerBolter_Inferno_Round",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_StalkerBolter_Kraken_Round",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AV_Vengeance_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "OLAV_Las_round_rnd",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "Black Templars' Armoury",
+      "slug": "bta",
+      "requiredAddons": [
+        "blacktemplararmoury_tiow",
+        "bt_armoury_icywolf",
+        "bt_armoury_issidya",
+        "bt_armoury_taj",
+        "bt_assault_shotgun",
+        "lazy_caeledis_bta_smweapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "BT_ASB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Assault_Shotgun_Wyrmbreath_1",
+          "parent": "B_12Gauge_Pellets_Submunition",
+          "damageType": "burn"
+        },
+        {
+          "class": "BT_Bolt_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_GPC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_MSB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_SmHeavyBolterRnd",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_Auto_APCR_Rnd",
+          "parent": "ShellBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_Auto_HE_Rnd",
+          "parent": "ShellBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_PC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_TSB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_XLC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "BTA_Hand_Flamer_Ammo",
+          "parent": "Flamethrower_Fuel",
+          "damageType": "burn"
+        },
+        {
+          "class": "Issidya_BT_VIHB_SmBoltRound_DF",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_ExecutorBoltRifle_Ammo",
+          "parent": "JC_HeavyBoltRifle_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_ExecutorBoltRifle_DF_Ammo",
+          "parent": "JC_HeavyBoltRifle_DF_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_ExecutorBoltRifle_INF_Ammo",
+          "parent": "JC_HeavyBoltRifle_INF_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_ExecutorBoltRifle_K_Ammo",
+          "parent": "JC_HeavyBoltRifle_K_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HeavyBoltRifle_Ammo",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HeavyBoltRifle_DF_Ammo",
+          "parent": "Steve_Trig_SmBoltRound_DF",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HeavyBoltRifle_INF_Ammo",
+          "parent": "Dos_Bolter_Inferno_round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HeavyBoltRifle_K_Ammo",
+          "parent": "Steve_Trig_SmBoltRound_K",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HellstormBoltRifle_Ammo",
+          "parent": "JC_HeavyBoltRifle_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HellstormBoltRifle_DF_Ammo",
+          "parent": "JC_HeavyBoltRifle_DF_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HellstormBoltRifle_INF_Ammo",
+          "parent": "JC_HeavyBoltRifle_INF_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JC_HellstormBoltRifle_K_Ammo",
+          "parent": "JC_HeavyBoltRifle_K_Ammo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCaleb_HeavyPlasmaCannon_Ammo",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "JCaleb_HeavyPlasmaCannon_Ammo_OC",
+          "parent": "TIOW_SM_Overcharge_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "Taj_BoltPistol_Ammo",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Taj_BoltPistol_INF_Ammo",
+          "parent": "Dos_Bolter_Inferno_round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Taj_BoltPistol_K_Ammo",
+          "parent": "Steve_Trig_SmBoltRound_K",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Taj_Flamethrower_Fuel",
+          "parent": "Flamethrower_Fuel",
+          "damageType": "burn"
+        },
+        {
+          "class": "Taj_HeavyBoltPistol_Ammo",
+          "parent": "Primaris_Dos_Bolt_RifleRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Taj_Inferno_Round",
+          "parent": "Dos_Bolter_Inferno_round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Taj_Melta_Rnd",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "Taj_Melta_Rnd_1_S",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "Taj_P_Melta_Rnd",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "Taj_Shrike_Sniper_Ammo",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "BT Balance Patch",
+      "slug": "bt_balance",
+      "requiredAddons": [
+        "bt_balance_patch"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "BT_SmBoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "Burn 'Em Redux",
+      "slug": "burnem",
+      "requiredAddons": [
+        "m2"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Flamethrower_Fuel",
+          "parent": "BulletBase",
+          "damageType": "burn"
+        }
+      ]
+    },
+    {
+      "name": "Consecrators Datapack",
+      "slug": "consecrators",
+      "requiredAddons": [
+        "concs_apoth_marines",
+        "cons_weapon_rebalances",
+        "consecrators_customs",
+        "doc_capt_set",
+        "tiow_consecrators_datapack"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "CONS_Inferno_Round",
+          "parent": "Steve_30k_Melta_Round_New",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CONS_M40A2_Bolt",
+          "parent": "TIOW_LongLas_LasBolt",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CONS_M40A2_Hotshot_Bolt",
+          "parent": "CONS_M40A2_Bolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "CONS_Melta_Warhead_Ammo",
+          "parent": "CONS_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "CONS_Speeder_Heavy_Bolter_Rnd",
+          "parent": "AoD_Heavy_Boltgun_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Doc_Volkite_Charger_Rnd",
+          "parent": "Steve_Volkite_Charger_Rnd",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Crossing The Rubicon",
+      "slug": "ctr",
+      "requiredAddons": [
+        "ctr_flamers",
+        "ctr_hammerfallbunker",
+        "ctr_weapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "CTR_Bolt_Round",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Bolt_Round_2",
+          "parent": "CTR_Bolt_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Flamer_Fuel",
+          "parent": "Flamethrower_Fuel",
+          "damageType": "burn"
+        },
+        {
+          "class": "CTR_Heavy_Plasma_Overcharge_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_Heavy_Plasma_Pistol_Overcharge_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_Heavy_Plasma_Pistol_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_Heavy_Plasma_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_HeavyBolter_Rnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Kraken_Round",
+          "parent": "CTR_Bolt_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Las_Fusil_Round",
+          "parent": "TIOW_SM_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "CTR_Melta_Round",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "CTR_Plasma_Overcharge_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_Plasma_Round",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "CTR_Shrike_Bolt_Round",
+          "parent": "CTR_Bolt_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Stalker_Bolt_Round",
+          "parent": "CTR_Bolt_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Vengeance_Round",
+          "parent": "CTR_Bolt_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "CTR_Volkite_Round",
+          "parent": "Steve_Volkite_Cav_Rnd",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Departmento Munitorum - Warhammer 40k",
+      "slug": "munitorum",
+      "requiredAddons": [
+        "ic_departmento_weapons",
+        "ic_guevesa"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "IC_bolter_small_rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "IC_lasboltBlue",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_lasboltG",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_lasboltGreen",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_lasboltYellow",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_lucius_longlasBolt",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_melta_rnd",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "IC_Plasma_rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "IC_Plasma_rndPurple",
+          "parent": "IC_Plasma_rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "IC_Plasma_rndRed",
+          "parent": "IC_Plasma_rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "IC_Plasma_rndWhite",
+          "parent": "IC_Plasma_rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "IC_Plasma_rndYellow",
+          "parent": "IC_Plasma_rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "IC_plasma_small_rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "Dos Test AOD 2.0 Mod",
+      "slug": "aod2",
+      "requiredAddons": [
+        "aod_all_weps",
+        "aod_track_tanks_2",
+        "aod_track_tanks_3",
+        "aod_vtol"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "AoD_Atrox_Bolt_Rnd",
+          "parent": "AoD_Phobos_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Autocannon_Rnd",
+          "parent": "Sh_120mm_HE",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Exitus_Bolt_Rnd",
+          "parent": "AoD_Tigrus_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Exitus_DF_Rnd",
+          "parent": "AoD_Tigrus_DF_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Exitus_Kr_Rnd",
+          "parent": "AoD_Tigrus_Kr_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Heavy_Boltgun_DF_Rnd",
+          "parent": "AoD_Tigrus_DF_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Heavy_Boltgun_KR_Rnd",
+          "parent": "AoD_Tigrus_Kr_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Heavy_Boltgun_Rnd",
+          "parent": "AoD_Tigrus_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_LasCannon_Rnd",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "AoD_Lascutter_Rnd",
+          "parent": "AoD_Meltagun_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "AoD_Meltagun_Rnd",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "AoD_Meltagun_Vic_Rnd",
+          "parent": "AoD_Meltagun_Rnd",
+          "damageType": "melta"
+        },
+        {
+          "class": "AoD_Multi_Melta_Rnd",
+          "parent": "AoD_Meltagun_Rnd",
+          "damageType": "melta"
+        },
+        {
+          "class": "AoD_Phobos_Bolt_Rnd",
+          "parent": "AoD_Tigrus_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Plasma_Cannon_Rnd",
+          "parent": "AoD_Ryza_OC_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AoD_Rotor_Cannon_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Ryza_Plasma_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "AoD_SE_Las_Rnd",
+          "parent": "AoD_LasCannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "AoD_Tigrus_Bolt_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Tigrus_Bolt_Rnd_AA",
+          "parent": "AoD_Tigrus_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Umbra_Bolt_Rnd",
+          "parent": "AoD_Tigrus_Bolt_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "AoD_Volkite_Caliver_Rnd",
+          "parent": "AoD_Volkite_Charger_Rnd",
+          "damageType": "volkite"
+        },
+        {
+          "class": "AoD_Volkite_Charger_Rnd",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "AoD_Volkite_Culverin_Rnd",
+          "parent": "AoD_Volkite_Charger_Rnd",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Dosiel Funtime 40k Skins",
+      "slug": "dosiel_skins",
+      "requiredAddons": [
+        "tiow_dos_ssw"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Dos_Bolter_Inferno_round",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Dos_Bolter_Kraken_round",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Dos_Flame_Round",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "burn"
+        },
+        {
+          "class": "Dos_Melta_Round",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        }
+      ]
+    },
+    {
+      "name": "Forges of Mars - Admech expansion",
+      "slug": "forges_mars",
+      "requiredAddons": [
+        "am_weapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "AM_MLaserBolt",
+          "parent": "TIOW_LongLas_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "AM_plasma_round",
+          "parent": "TIOW_Overcharge_PlasmagunRound",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "Forges of the Imperial Guard",
+      "slug": "fig",
+      "requiredAddons": [
+        "fig_air",
+        "fig_weapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Fig_BolterAmmo",
+          "parent": "B_338_NM_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "FIG_LasGun_Ammo",
+          "parent": "B_762x51_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_LasGun_Ammo_Accatran",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_LasGun_Ammo_Hellgun",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_LasGun_Ammo_HellgunKrieg",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_LasGun_Ammo_LongLas",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_LasGun_Ammo_Tzeench",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "Fig_MeltaAmmo",
+          "parent": "B_40mm_APFSDS_Tracer_Red",
+          "damageType": "melta"
+        },
+        {
+          "class": "FIG_Multi_Laser_Heli_Ammo",
+          "parent": "FIG_LasGun_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "FIG_Multi_Laser_Heli_Ammo_HS",
+          "parent": "FIG_Multi_Laser_Heli_Ammo",
+          "damageType": "laser"
+        },
+        {
+          "class": "Fig_PlasmaAmmo",
+          "parent": "B_40mm_APFSDS_Tracer_Red",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "Forges of War",
+      "slug": "fow",
+      "requiredAddons": [
+        "a3_weapons_f_fow"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "fow_lasbolt_green",
+          "parent": "FoW_lasbolt_hvy_red",
+          "damageType": "laser"
+        },
+        {
+          "class": "fow_lasbolt_hvy_green",
+          "parent": "FoW_lasbolt_hvy_red",
+          "damageType": "laser"
+        },
+        {
+          "class": "fow_lasbolt_lgt_green",
+          "parent": "fow_lasbolt_lgt_red",
+          "damageType": "laser"
+        },
+        {
+          "class": "fow_lasbolt_Ovr_green",
+          "parent": "FoW_lasbolt_Ovr_red",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "Grimdark Armory",
+      "slug": "grimdark",
+      "requiredAddons": [
+        "ml700_bolter",
+        "ml700_melta_bomb",
+        "ml700_weapons_lasgun",
+        "ml700_weapons_longlas",
+        "ml700_weapons_plasmapistol",
+        "ml700_weapons_vehicle"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "ML700_Ammo_melta_bomb",
+          "parent": "GrenadeHand",
+          "damageType": "melta"
+        },
+        {
+          "class": "ML700_Bolt_gun_ball",
+          "parent": "B_762x51_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_Bolt_gun_Scattershot",
+          "parent": "ML700_Bolt_gun_ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_Bolt_Scatter_munition",
+          "parent": "B_762x51_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_HeavyBolter_30mm_ball",
+          "parent": "ML700_Autocannon_30mm_ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_HeavyBolter_vehicle_ball",
+          "parent": "ML700_Autocannon_vehicle_ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_HeavyBolter_vehicle_ball_AP",
+          "parent": "ML700_Autocannon_vehicle_ball_AP",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_HeavyBolter_vehicle_ball_HE",
+          "parent": "ML700_Autocannon_vehicle_ball_HE",
+          "damageType": "bolt"
+        },
+        {
+          "class": "ML700_lascannon_vehicle_ball",
+          "parent": "B_20mm",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_AR_B_ball",
+          "parent": "ML700_Lasgun_ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_AR_ball",
+          "parent": "ML700_Lasgun_ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_AR_G_ball",
+          "parent": "ML700_Lasgun_ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_B_ball",
+          "parent": "ML700_Lasgun_ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_ball",
+          "parent": "B_762x51_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Lasgun_G_ball",
+          "parent": "ML700_Lasgun_ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Longlas_B_ball",
+          "parent": "B_338_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Longlas_ball",
+          "parent": "B_338_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Longlas_H_B_ball",
+          "parent": "B_127x99_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Longlas_H_ball",
+          "parent": "B_127x99_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "ML700_Plasma_ball",
+          "parent": "B_19mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "ML700_Plasma_Overcharged",
+          "parent": "ML700_Plasma_ball",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "Imperial Conquest - Warhammer 40k",
+      "slug": "imperial_conquest",
+      "requiredAddons": [
+        "ic_weapons_base"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "IC_lasbolt",
+          "parent": "B_556x45_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "Ic_lasbolt_laspistol",
+          "parent": "IC_lasbolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "IC_Lascannon_bolt",
+          "parent": "Sh_120mm_APFSDS",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "JCaleb's Bolter Expansion",
+      "slug": "jcbe",
+      "requiredAddons": [
+        "jcalebsbolterexpansion"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "JCBE_Hellfire_Round",
+          "parent": "JCBE_Bloodshard_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Inferno_Psyker_Round",
+          "parent": "JCBE_Standard_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Inferno_Round",
+          "parent": "JCBE_Dragonrage_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Kraken_Round",
+          "parent": "JCBE_Standard_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Metal_Storm_Round",
+          "parent": "JCBE_Bloodshard_Round",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Metal_Storm_Sub_1",
+          "parent": "JCBE_Bloodshard_Sub_1",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Standard_Round",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "JCBE_Vengeance_Round",
+          "parent": "JCBE_Standard_Round",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "Lazy's Bolter Rebalance Mod",
+      "slug": "lazy_bolter",
+      "requiredAddons": [
+        "lazy_bt_weapon_balance_patch"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "BT_Lazy_Heavy_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Heavy_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Heavy_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Lascannon_Round",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "BT_Lazy_Lascutter_Round",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "BT_Lazy_Meltagun_Round",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "BT_Lazy_Multi_Melta_Round",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Atrox_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Atrox_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Atrox_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Phobos_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Plasma_Cannon_Round",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_Lazy_Ryza_Plasma_Overhcarge_Round",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_Lazy_Ryza_Plasma_Round",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Exitus_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Exitus_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Tigrus_Exitus_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Umbra_Bolt_Round_Base",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Umbra_Bolt_Round_Dragonfire",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Umbra_Bolt_Round_Kraken",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_Lazy_Volkite_Caliver_Round",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "BT_Lazy_Volkite_Charger_Round",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        },
+        {
+          "class": "BT_Lazy_Volkite_Culverin_Round",
+          "parent": "BulletBase",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Onager Dunecrawler",
+      "slug": "dunecrawler",
+      "requiredAddons": [
+        "wbk_dunecrawler_turret"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "WBK_Dunecrawler_Laser_Ammo",
+          "parent": "B_762x51_Ball",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "Project Primaris",
+      "slug": "primaris",
+      "requiredAddons": [
+        "pp_dos_vehs_primaris",
+        "project_primaris_dos_weapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "PP_SM_Bike_BoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Primaris_Dos_Bolt_RifleRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Primaris_Dos_S_Bolt_RifleRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "Re-fortification Space Marine Expansion",
+      "slug": "refortification",
+      "requiredAddons": [
+        "neph_cons_jet"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "AMBolter_Cons_Rnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Neph_Bolt_Rnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "Sci-fi Turret Pack",
+      "slug": "scifi_turrets",
+      "requiredAddons": [
+        "phen_turretpack"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "PHEN_TurretPack_FlameTurret_Weapon_Rnd",
+          "parent": "BulletBase",
+          "damageType": "burn"
+        },
+        {
+          "class": "PHEN_TurretPack_FlameTurret_Weapon_Rnd_Sub",
+          "parent": "BulletBase",
+          "damageType": "burn"
+        }
+      ]
+    },
+    {
+      "name": "Solar Auxilia",
+      "slug": "solar_aux",
+      "requiredAddons": [
+        "wbk_solarauxweapons"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "SolarAux_LasRifleAmmo",
+          "parent": "B_127x99_Ball_Tracer_Yellow",
+          "damageType": "laser"
+        },
+        {
+          "class": "SolarAux_MeltaAmmo",
+          "parent": "B_40mm_APFSDS_Tracer_Red",
+          "damageType": "melta"
+        },
+        {
+          "class": "SolarAux_VolkiteAmmo",
+          "parent": "SolarAux_LasRifleAmmo",
+          "damageType": "volkite"
+        }
+      ]
+    },
+    {
+      "name": "Star Of Damocles - 40k Expansion Pack",
+      "slug": "damocles",
+      "requiredAddons": [
+        "dmcls_ig_weapons_c"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "DMCLS_lasbolt",
+          "parent": "B_127x99_Ball",
+          "damageType": "laser"
+        },
+        {
+          "class": "DMCLS_lasbolt_volley",
+          "parent": "B_127x99_Ball",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "Tactical Dreadnought Armoury",
+      "slug": "tda",
+      "requiredAddons": [
+        "tda_weapons",
+        "tda_wolf"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "HeavyFlamer_Fuel",
+          "parent": "TIOW_IG_HeavyFlamer_Rnd",
+          "damageType": "burn"
+        },
+        {
+          "class": "TDA_Bolter_Round",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TDA_Melta_Rnd",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "TDA_Plasma_Blaster_OC_Rnd",
+          "parent": "TIOW_SM_PlasmaCannon_OC_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TDA_Plasma_Blaster_Rnd",
+          "parent": "TIOW_SM_PlasmaCannon_Rnd",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "There is Only War Mod - Release 5 BETA",
+      "slug": "tiow",
+      "requiredAddons": [
+        "a40k_wepbase",
+        "cadian_weapons",
+        "dkok_weapons",
+        "imperial_grenades",
+        "tiow_spec_weps",
+        "tiow_warhound",
+        "tiowspacemarinewep"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Lucius98_LasBolt",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "M36KantRifle_LasBolt",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_Antioc43_LasBolt",
+          "parent": "Lucius98_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_Antioc43_LasBoltHeavy",
+          "parent": "Lucius98_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_Autocannon60mmAP",
+          "parent": "B_30mm_APFSDS",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_Autocannon60mmHE",
+          "parent": "B_40mm_GPR",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_IG_GL_Flame_ammo",
+          "parent": "TIOW_IG_HeavyFlamer_Rnd",
+          "damageType": "burn"
+        },
+        {
+          "class": "TIOW_IG_HeavyBolter_Rnd",
+          "parent": "B_30mm_HE",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_IG_HeavyFlamer_Rnd",
+          "parent": "BulletBase",
+          "damageType": "burn"
+        },
+        {
+          "class": "TIOW_IG_HeavyFlamer_Rnd_Sub",
+          "parent": "BulletBase",
+          "damageType": "burn"
+        },
+        {
+          "class": "TIOW_ig_melta_bomb_ammo",
+          "parent": "Grenade",
+          "damageType": "melta"
+        },
+        {
+          "class": "TIOW_IG_MultiMelta_Rnd",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "TIOW_IG_PlasmaCannon_Rnd",
+          "parent": "SH_120mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_IGBoltRound",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_LemanRuss_Lascannon_Rnd",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_LongLas_LasBolt",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_Melta_Ammo",
+          "parent": "BulletBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "TIOW_melta_bomb_placeable_Ammo",
+          "parent": "PipeBombBase",
+          "damageType": "melta"
+        },
+        {
+          "class": "TIOW_Overcharge_PlasmagunRound",
+          "parent": "TIOW_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_PlasmaCannonExecutioner_Rnd",
+          "parent": "SH_120mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_PlasmagunRound",
+          "parent": "SH_120mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SM_Overcharge_PlasmagunRound",
+          "parent": "TIOW_SM_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SM_PlasmagunRound",
+          "parent": "SH_120mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SmBoltRound",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_SmHeavyBolterRnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_TLD_Bolts",
+          "parent": "LsCnnChrg1k",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_TLD_Bolts_Penetrator",
+          "parent": "ammo_Penetrator_Base",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_TLD_Traitor_Bolts",
+          "parent": "TIOW_TLD_Bolts",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Type14_LasBolt",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "TIOW2",
+      "slug": "tiow2",
+      "requiredAddons": [
+        "ork_gubbinz",
+        "orkdakka",
+        "tiow_boltpistols",
+        "tiow_delaque_weps",
+        "tiow_dos_weps",
+        "tiow_sm_fast_attack",
+        "tiow_thunderhawk"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "Bike_Melta_Round",
+          "parent": "TIOW_Melta_Ammo",
+          "damageType": "melta"
+        },
+        {
+          "class": "F_OrkBurna_Flame",
+          "parent": "TIOW_IG_HeavyFlamer_Rnd",
+          "damageType": "burn"
+        },
+        {
+          "class": "THW_TIOW_Bolt_Rnd",
+          "parent": "TIOW_IG_HeavyBolter_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_BoltPistol_Base_Ammo",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_Guard_Bolt_Rnd",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_ManBolterRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_plasma_CAV_Round",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_PlasmaPistolRound",
+          "parent": "TIOW_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_PlasmaPistolRound_OC",
+          "parent": "TIOW_Overcharge_PlasmagunRound",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SM_Bike_BoltRound",
+          "parent": "TIOW_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_SM_Bike_PlasmaRound",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SM_Lascannon_Rnd",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        },
+        {
+          "class": "TIOW_SM_PlasmaCannon_OC_Rnd",
+          "parent": "TIOW_IG_PlasmaCannon_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_SM_PlasmaCannon_Rnd",
+          "parent": "TIOW_IG_PlasmaCannon_Rnd",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_TL_thwk_Bolts",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TWH_TIOW_Las_round_rnd",
+          "parent": "TIOW_LemanRuss_Lascannon_Rnd",
+          "damageType": "laser"
+        }
+      ]
+    },
+    {
+      "name": "Ultimate Super Dreadnought Test",
+      "slug": "super_dread",
+      "requiredAddons": [
+        "steve_d_dread"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "DD_CombiBoltgunMag_rnd",
+          "parent": "TIOW_SmHeavyBolterRnd",
+          "damageType": "bolt"
+        }
+      ]
+    },
+    {
+      "name": "Vanguard TIOW Addon",
+      "slug": "vanguard",
+      "requiredAddons": [
+        "vng_las_bolt",
+        "vng_tiow_addon",
+        "vng_tiow_vanilla_compat"
+      ],
+      "after": [
+        "tiow2",
+        "tiow"
+      ],
+      "ammo": [
+        {
+          "class": "TIOW_plasma_CAV_Round",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "TIOW_PlasmagunRound",
+          "parent": "Sh_120mm_HE",
+          "damageType": "plasma"
+        },
+        {
+          "class": "VNG_HighPoweredM36KantRifle_LasBolt",
+          "parent": "M36KantRifle_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_base",
+          "parent": "BulletBase",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_high_powered_high",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_high_powered_low",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_high_powered_medium",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_standard_high",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_standard_low",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "vng_las_bolt_standard_medium",
+          "parent": "vng_las_bolt_base",
+          "damageType": "laser"
+        },
+        {
+          "class": "VNG_LasPistol_High_LasBolt",
+          "parent": "VNG_LasPistol_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "VNG_LasPistol_LasBolt",
+          "parent": "M36KantRifle_LasBolt",
+          "damageType": "laser"
+        },
+        {
+          "class": "VNG_MLMelta",
+          "parent": "TIOW_MLAT",
+          "damageType": "melta"
+        },
+        {
+          "class": "VNG_MLMelta_Penetrator",
+          "parent": "ammo_Penetrator_Base",
+          "damageType": "melta"
+        },
+        {
+          "class": "VNG_PlasmagunRound_Penetrator",
+          "parent": "ammo_Penetrator_Base",
+          "damageType": "plasma"
+        }
+      ]
+    },
+    {
+      "name": "Yilan001's 40k Object Addon",
+      "slug": "yilan",
+      "requiredAddons": [
+        "yilan001_40k_vindicare_addon",
+        "yl001_chaos_stalktank_weapons",
+        "yl001_chaos_tank_stumblegun_01",
+        "yl001_imperial_combatservitor_01",
+        "yl001_tau_battlesuit_weapons",
+        "yl001_tau_turrets"
+      ],
+      "after": [],
+      "ammo": [
+        {
+          "class": "YL001_Bolter_bullet",
+          "parent": "YL001_HeavyBolter_bullet",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_BurstCannon_bullet",
+          "parent": "B_127x99_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_exitus_base",
+          "parent": "B_127x33_Ball",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_exitus_hellfire",
+          "parent": "YL001_exitus_turbo",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_exitus_turbo",
+          "parent": "YL001_exitus_base",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_HeavyBolter_bullet",
+          "parent": "B_30mm_MP",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_HeavyFlamer_bullet",
+          "parent": "YL001_TauFlamer_bullet",
+          "damageType": "burn"
+        },
+        {
+          "class": "YL001_Lascannon_bullet",
+          "parent": "B_40mm_APFSDS",
+          "damageType": "laser"
+        },
+        {
+          "class": "YL001_PlasmaRifle_Bullet",
+          "parent": "YL001_FusionCannon_Bullet",
+          "damageType": "plasma"
+        },
+        {
+          "class": "YL001_Static_PlasmaRifle_Bullet",
+          "parent": "YL001_BurstCannon_bullet",
+          "damageType": "plasma"
+        },
+        {
+          "class": "YL001_Stumblegun_Plasma",
+          "parent": "B_20mm_Tracer_Red",
+          "damageType": "plasma"
+        },
+        {
+          "class": "YL001_TauFlamer_bullet",
+          "parent": "YL001_FusionCannon_Bullet",
+          "damageType": "burn"
+        },
+        {
+          "class": "YL001_TauFlamer_bullet_sub",
+          "parent": "YL001_FusionCannon_Bullet",
+          "damageType": "burn"
+        }
+      ]
+    }
+  ]
+}

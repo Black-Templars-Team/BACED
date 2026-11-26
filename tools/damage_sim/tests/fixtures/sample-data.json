@@ -1,0 +1,10 @@
+{
+  "ammo": {"BenchRound": {"hit": 10, "typicalSpeed": 1000, "indirectHitRange": 2}},
+  "gear": {
+    "uniforms": {"BenchUniform": {"unitClass": "BenchTarget"}},
+    "units": {"BenchTarget": {"armor": 8, "hitpoints": {"HitChest": {"armor": 1, "name": "spine3", "radius": 0.1}}}},
+    "vests": {"BenchVest": {"protection": {"HitChest": {"armor": 2, "passThrough": 0.5}}}},
+    "helmets": {},
+    "backpacks": {}
+  }
+}
