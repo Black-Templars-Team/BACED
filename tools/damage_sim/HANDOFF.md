@@ -18,14 +18,14 @@ Status as of 2026-11-26. Start with [README.md](README.md), then [docs/MODEL.md]
 |---|---|
 | Installed ACE medical code matches `master` | the 11 functions used were extracted from `ace_medical*.pbo` and diffed against `master`: identical apart from CRLF line endings |
 | Config parsing | `tests/test_readers.py`; the binary parser checked against ACE's injuries config; text configs via hemtt |
+| BACED wounds and ammo compatibility | `hemtt build`, `extract.py` and `build_page.py` loaded 31 BACED addons with the BT preset. Reader tests cover dependency skips and English names; model tests verify all five damage types, the TIOW bolt ammo patch and a suit-off CTR chest hit using `bolt`. |
 | Model behaviour | `tests/model.test.js`: ACE armor, Black Carapace, shot ray-cast, all three calibration fixtures and the 100 m WB Mk 4 regression |
 | Page | loaded in a headless browser with no errors; editing an inline value re-runs the page and lists the change; reviewed once by an independent agent from screenshots only, and its four accepted points were fixed |
 | Weapon balancing roster and model | `tests/test_rosters.py` uses saved sheet copies. `tests/model.test.js` covers shot percentiles and hit chance, class and mode labels, class-keyed overrides, and the shared rows used by `sim.js balance`. The full data-dependent run has not been reverified in this worktree |
 | Weapon balancing browser baseline | Before the redesign, headless checks at 1360 px and 390 px (light and dark) covered workers and the `file://` fallback, hover and tap tooltips, zoom, Expand, "Open in single weapon", and the other-mods toggle. See open work for redesign checks |
 | Black Carapace and KAT logic | ported from the installed mod scripts (paths in docs/MODEL.md), not from documentation |
 
-For this docs pass, `data/game_data.json` was absent locally and shell permissions blocked the build,
-test suites and CLI smoke test. The browser checks below are still open.
+The balancing redesign browser checks below are still open.
 
 The pooled torso fit for `CTR_Bolt_Round` against the WB Mk 4 sets the default scale/cap/exponent to
 0.91/0.89/0.5. The third run (`tests/fixtures/battery-wb-mk4-aim.rpt`) used runtime aim points and hit
@@ -94,6 +94,8 @@ re-extract before using an older page or data bundle.
   Acquisition tier. Target and aim come from the shared left column. Certs are colour coded, a weapon on
   several certs is split between their colours, and Reliquary relics are their own group. Other 40k mods
   (never vanilla Arma) are an optional overlay.
+- (2026-11-26) Load locally built BACED PBOs after the preset mods and respect optional compat dependencies.
+  Read English wound labels from the medical stringtable and show build provenance in Data and settings.
 - Black Carapace is a visible toggle (disabled when the server runs it HUD-only).
 - The body figure's source model must not be committed or named anywhere in the repository.
 
@@ -111,8 +113,12 @@ re-extract before using an older page or data bundle.
 
 ## Commands
 
+Start in the repository root, the directory containing `.hemtt/project.toml`:
+
 ```bash
+hemtt build
 cd tools/damage_sim
+python3 extract.py
 python3 build_page.py
 python3 -m unittest discover -s tests
 node --test tests/model.test.js

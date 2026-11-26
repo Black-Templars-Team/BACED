@@ -71,6 +71,11 @@
           "damageType": "plasma"
         },
         {
+          "class": "Steve_Autocannon60mmHE",
+          "parent": "TIOW_Autocannon60mmHE",
+          "damageType": "bolt"
+        },
+        {
           "class": "Steve_Jetbike_MultiMelta_Round",
           "parent": "Steve_30k_Melta_Round",
           "damageType": "melta"
@@ -108,6 +113,11 @@
         {
           "class": "Steve_Phob_SmBoltRound_K",
           "parent": "Steve_Phob_SmBoltRound",
+          "damageType": "bolt"
+        },
+        {
+          "class": "Steve_Rotor_Cannon_Round_new",
+          "parent": "BulletBase",
           "damageType": "bolt"
         },
         {
@@ -386,6 +396,11 @@
       "after": [],
       "ammo": [
         {
+          "class": "BT_ASB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
           "class": "BT_Assault_Shotgun_Wyrmbreath_1",
           "parent": "B_12Gauge_Pellets_Submunition",
           "damageType": "burn"
@@ -396,9 +411,44 @@
           "damageType": "bolt"
         },
         {
+          "class": "BT_GPC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_MSB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
           "class": "BT_SmHeavyBolterRnd",
           "parent": "TIOW_SmHeavyBolterRnd",
           "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_Auto_APCR_Rnd",
+          "parent": "ShellBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_Auto_HE_Rnd",
+          "parent": "ShellBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_T_PC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "plasma"
+        },
+        {
+          "class": "BT_TSB_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
+          "class": "BT_XLC_Rnd",
+          "parent": "BulletBase",
+          "damageType": "laser"
         },
         {
           "class": "BTA_Hand_Flamer_Ammo",
@@ -524,6 +574,11 @@
           "class": "Taj_P_Melta_Rnd",
           "parent": "TIOW_Melta_Ammo",
           "damageType": "melta"
+        },
+        {
+          "class": "Taj_Shrike_Sniper_Ammo",
+          "parent": "BulletBase",
+          "damageType": "bolt"
         }
       ]
     },
@@ -791,6 +846,11 @@
           "damageType": "bolt"
         },
         {
+          "class": "AoD_Autocannon_Rnd",
+          "parent": "Sh_120mm_HE",
+          "damageType": "bolt"
+        },
+        {
           "class": "AoD_Exitus_Bolt_Rnd",
           "parent": "AoD_Tigrus_Bolt_Rnd",
           "damageType": "bolt"
@@ -854,6 +914,11 @@
           "class": "AoD_Plasma_Cannon_Rnd",
           "parent": "AoD_Ryza_OC_Rnd",
           "damageType": "plasma"
+        },
+        {
+          "class": "AoD_Rotor_Cannon_Rnd",
+          "parent": "BulletBase",
+          "damageType": "bolt"
         },
         {
           "class": "AoD_Ryza_Plasma_Rnd",
@@ -1227,6 +1292,11 @@
           "damageType": "bolt"
         },
         {
+          "class": "JCBE_Standard_Round",
+          "parent": "BulletBase",
+          "damageType": "bolt"
+        },
+        {
           "class": "JCBE_Vengeance_Round",
           "parent": "JCBE_Standard_Round",
           "damageType": "bolt"
@@ -1580,6 +1650,16 @@
           "damageType": "laser"
         },
         {
+          "class": "TIOW_Autocannon60mmAP",
+          "parent": "B_30mm_APFSDS",
+          "damageType": "bolt"
+        },
+        {
+          "class": "TIOW_Autocannon60mmHE",
+          "parent": "B_40mm_GPR",
+          "damageType": "bolt"
+        },
+        {
           "class": "TIOW_IG_GL_Flame_ammo",
           "parent": "TIOW_IG_HeavyFlamer_Rnd",
           "damageType": "burn"
@@ -1913,6 +1993,11 @@
         {
           "class": "YL001_Bolter_bullet",
           "parent": "YL001_HeavyBolter_bullet",
+          "damageType": "bolt"
+        },
+        {
+          "class": "YL001_BurstCannon_bullet",
+          "parent": "B_127x99_Ball",
           "damageType": "bolt"
         },
         {

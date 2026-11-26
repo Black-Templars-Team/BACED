@@ -157,6 +157,12 @@ def main():
         print(f"server settings: {len(server)} values from {args.server_settings}")
     full_scripts = data.get("damageScripts", [])
     data = trim(data)
+    baced = data.get("baced")
+    if baced is None:
+        print("BACED addons not loaded: run hemtt build, then extract.py")
+    else:
+        print(f"BACED addons: {len(baced['loaded'])} loaded (built {baced['built']}), "
+              f"{len(baced['skipped'])} skipped because their mod is not in the preset")
     data["serverSettings"] = server
     # Scripts that can touch a marine's damage, summarised per mod for the page footer
     relevant = {}

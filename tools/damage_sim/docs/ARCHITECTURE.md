@@ -1,7 +1,7 @@
 # Architecture
 
 ```
-Steam: Arma 3 + workshop mods + launcher preset          exported cba_settings.sqf
+Arma 3 + preset mods + built BACED PBOs                   exported cba_settings.sqf
         │                                                          │
         ▼                                                          │
 extract.py ── armaconfig.py (PBO, rapify, text)                    │
@@ -27,7 +27,8 @@ below). None of `data/` is committed.
    resolving each workshop id to its name through `meta.cpp` or `mod.cpp`.
 2. **Sources.** `Dta/bin.pbo`, every PBO in the platform folders loaded without `-mod`
    (`Addons`, `Argo`, `Curator`, `Enoch`, `Expansion`, `Heli`, `Jets`, `Kart`, `Mark`, `Orange`, `Tacops`,
-   `Tank`, `AoW`; Contact is opt-in and left out), then every mod's PBOs in preset order.
+    `Tank`, `AoW`; Contact is opt-in and left out), then every mod's PBOs in preset order, then BACED's
+    built PBOs (`.hemttout/build/addons/` at the repo root, `--baced DIR` to override, `--no-baced` to omit).
 3. **Configs.** The engine loads a config from every folder of a PBO, so each folder's `config.bin` (or a
     root `config.cpp`) becomes one addon. Binary configs go through `armaconfig.parse_rapified`; text configs are
     unpacked by `armaconfig` (hemtt's own unpacker crashes on some PBOs) and preprocessed by
@@ -39,7 +40,7 @@ below). None of `data/` is committed.
 4. **Skips.** Addons with `skipWhenMissingDependencies` whose `requiredAddons` are not all present are
    dropped, as the engine does. Unreadable PBOs (obfuscated, broken includes) are listed in `skippedPbos`.
 5. **Load order.** A stable depth-first topological sort on `CfgPatches.requiredAddons`, ties broken by
-   discovery order (platform first, then preset order).
+    discovery order (platform first, preset mods next, BACED last).
 6. **Merge rules** (`merge()`):
    - a later addon's class patches the existing class: values and arrays replace, `+=` appends to the
      inherited value at lookup time, `delete X` removes a child class;
@@ -51,13 +52,16 @@ below). None of `data/` is committed.
 7. **Scripts and settings.** Every `.sqf/.hpp/.cpp/.inc` in mod PBOs is scanned for damage hooks
    (`HandleDamage`, `HitPart`, ACE medical overrides, `woundReceived`) and for `CBA_fnc_addSetting` calls,
    whose defaults are kept for `ace_medical*`, `kat_breathing*`, `kat_circulation*`, `HOV_*` and `SLA_*`.
-   The Black Carapace tier order is read from its `HOV_fnc_setArmorValues` switch, so it follows mod updates.
+    The Black Carapace tier order is read from its `HOV_fnc_setArmorValues` switch, so it follows mod updates.
+8. **Wound names.** Reads English size-specific names from `addons/medical/stringtable.xml` at the repo root,
+   keeping only names for wound classes in the merged config. Missing stringtables give an empty map.
 
 ## data/game_data.json
 
 | Key | Content |
 |---|---|
 | `generated`, `preset`, `mods` | provenance |
+| `baced` | `null` without a local build, otherwise `{dir, pbos, loaded, skipped, built}`; `loaded` and `skipped` are CfgPatches names, and `built` is the newest PBO's modification time |
 | `weapons` | `class -> {displayName, type, mod, patchedBy, muzzles: [{name, displayName, initSpeed, magazineReloadTime, magazines[], modes: [{name, reloadTime, burst, dispersion, showToPlayer}]}]}`, scope 2 weapons of type 1, 2, 4 and 5 |
 | `magazines` | `class -> {displayName, ammo, initSpeed, count, mod}` |
 | `ammo` | `class -> {hit, indirectHit, indirectHitRange, caliber, typicalSpeed, airFriction, explosive, simulation, ACE_damageType, submunitionAmmo, ..., mod, patchedBy, valueSource}` |
@@ -66,7 +70,7 @@ below). None of `data/` is committed.
 | `gear.vests`, `gear.helmets`, `gear.backpacks` | `class -> {displayName, mod, protection: {HitChest: {armor, passThrough, explosionShielding, source}}}` |
 | `gear.aiUnits` | `unitClass -> {displayName, side, faction, factionName, category, subcategory, uniform, vest, helmet, backpack, mod, model}`; compacted in `page_data.js` to `[fields, {name: [vals...]}, ...]` with rehydration script |
 | `groups` | list of {side, sideName, faction, factionName, category, categoryName, group, name, units: [unitClass...]}; from `CfgGroups` |
-| `ace` | `wounds` (bleeding, pain, limping, fracture per wound class, in config order) and `damageTypes` (thresholds, selectionSpecific, wound weightings and multipliers, `woundHandlers` in config order with the mod that added each) |
+| `ace` | `wounds` (bleeding, pain, limping, fracture per wound class, in config order), `damageTypes` (thresholds, selectionSpecific, wound weightings and multipliers, `woundHandlers` in config order with the mod that added each), and `woundNames` (`class -> [minor, medium, large]`) |
 | `settings` | CBA setting definitions: `name -> {type, default, min, max, values, mod}` |
 | `bco` | Black Carapace: `uniformTiers`, `helmetTiers`, `zoneSelections` (selection name -> armor zone), `fallbackPlate`, `hitGuardSeconds` |
 | `skippedPbos`, `damageScripts` | what could not be read, and which mod scripts touch damage |

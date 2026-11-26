@@ -151,7 +151,7 @@ test("ACE armor: log scaling of the Mk7 pauldrons, engine sum unscaled", opts, (
 });
 
 test("ACE damage type comes from CfgAmmo inheritance", opts, () => {
-    assert.strictEqual(M.damageTypeOf(data, "BT_MSB_Rnd"), "bullet");
+    assert.strictEqual(M.damageTypeOf(data, "BT_CHB_Rnd"), "bolt"); // inherited from BT_MSB_Rnd's BACED patch
     assert.strictEqual(M.damageTypeOf(data, "explosion"), "unknown");
 });
 
@@ -237,6 +237,23 @@ test("Engine penetration visits ordered entries, skips exits and stops when spee
     assert.deepStrictEqual(spread.trace.filter((t) => t.stage === "engine" && t.detail?.entry).map((t) => t.detail.v), [764]);
 });
 
+test("BACED damage types and ammo patches are exported", opts, () => {
+    for (const type of ["bolt", "plasma", "melta", "laser", "volkite"]) {
+        assert.ok(data.ace.damageTypes[type], `missing BACED damage type: ${type}`);
+    }
+    assert.strictEqual(data.ammo.TIOW_SmBoltRound.ACE_damageType, "bolt");
+    assert.ok(data.baced.loaded.includes("baced_medical"));
+});
+
+test("CTR Bolt Rifle with the suit off uses BACED bolt wounds and labels", opts, () => {
+    const r = M.simulate(data, base({weapon: "CTR_Bolt_Rifle", unit: WB_CLASS, mode: "vanilla", traceHit: 1}));
+    assert.strictEqual(r.scenario.path, "vanilla");
+    assert.ok(r.trace.some(t => t.text.includes('damage type "bolt"')));
+    assert.ok(r.traceWounds.some(w => ["BoltWound", "Contusion", "Laceration"].includes(w.type)));
+    assert.strictEqual(M.woundLabel({type: "BoltWound", category: 0}, data), "Minor Bolt Puncture");
+    assert.strictEqual(M.woundLabel({type: "Contusion", category: 1}, data), "Medium Contusion");
+});
+
 test("CTR Bolt Rifle at 100 m: WB Mk 4 chest aim gives battery-scale damage per round",
     {skip: !haveData || !geometry ? "requires the extracted preset and body geometry" : false}, () => {
         const r = M.simulate(data, {weapon: "CTR_Bolt_Rifle", unit: "30k_Steve_Tactical_Legionary_MK_4_WB",
@@ -247,11 +264,13 @@ test("CTR Bolt Rifle at 100 m: WB Mk 4 chest aim gives battery-scale damage per 
          within(meanWoundEvents, 1.0, 1.5);
     });
 
+// The head calibration batteries used ACE's bullet wound rules, before BACED's bolt patch.
 test("CTR Bolt Rifle vs WB Mk 4 on server settings: crouched head hits kill, standing head hits miss",
     {skip: !haveData || !server ? "requires the extracted preset and server settings" : false}, () => {
         const d = withModel({...data, serverSettings: server}, WB_UNIFORM, "tiow_sm\\marine\\model\\mk4_uniform.p3d", WB_CLASS);
         const sc = {weapon: "CTR_Bolt_Rifle", unit: "30k_Steve_Tactical_Legionary_MK_4_WB", distance: 100,
-            mode: "vanilla", geometry: null, samples: 2000, seed: 1, traceHit: 1};
+            mode: "vanilla", geometry: null, samples: 2000, seed: 1, traceHit: 1,
+            overrides: {ammo: {ACE_damageType: "bullet"}}};
         for (const impact of ["HitHead", "HitFace", "HitNeck"]) {
             const crouched = M.simulate(d, {...sc, impact, target_stance: "crouched"});
             within(crouched.stats.meanWoundDamage, 1.5, 2.0);
@@ -274,7 +293,8 @@ test("CTR Bolt Rifle vs WB Mk 4 on server settings: crouched head hits kill, sta
 test("CTR Bolt Rifle at 100 m: crouched WB Mk 4 head aim hits the reference figure",
     {skip: !haveData || !geometry ? "requires the extracted preset and body geometry" : false}, () => {
         const r = M.simulate(data, {weapon: "CTR_Bolt_Rifle", unit: "30k_Steve_Tactical_Legionary_MK_4_WB",
-            distance: 100, impact: "HitHead", target_stance: "crouched", geometry, seed: 1});
+            distance: 100, impact: "HitHead", target_stance: "crouched", geometry, seed: 1,
+            overrides: {ammo: {ACE_damageType: "bullet"}}});
         assert.ok(r.stats.pHit > 0.9, `P(hits body) = ${r.stats.pHit}`);
         assert.ok(r.stats.pFatal >= 0.8, `P(dead) = ${r.stats.pFatal}`);
     });

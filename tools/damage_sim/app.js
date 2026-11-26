@@ -837,7 +837,8 @@
         if (!wounds.length) out.push(["No injuries on this bodypart...", NONISSUE]);
         for (const w of wounds) {
             const cls = classes[Math.floor(w[0] / 10)];
-            const name = (WOUND_NAMES[cls] || [cls, cls, cls])[w[0] % 10];
+            const category = w[0] % 10;
+            const name = D.ace.woundNames?.[cls]?.[category] || WOUND_NAMES[cls]?.[category] || cls;
             out.push([w[1] >= 1 ? `${Math.ceil(w[1])}x ${name}` : `Partial ${name}`, [1, 1, 1, 1]]);
         }
         return out;
@@ -1260,7 +1261,7 @@
         const out = [];
         const base = traceOf(r, "base");
         const chips = r.traceWounds.map((w) => el("span", {class: "wound-chip"},
-            `${M.woundLabel(w)} on ${partName(w.part)} (damage ${f(w.damage, 2)}, bleeding ${f(w.bleeding, 3)}${w.effect ? ", " + w.effect : ""})`));
+            `${M.woundLabel(w, D)} on ${partName(w.part)} (damage ${f(w.damage, 2)}, bleeding ${f(w.bleeding, 3)}${w.effect ? ", " + w.effect : ""})`));
         out.push(step("Wounds", {result: base.map((t) => t.text).join(" · ") || "no wound event on this shot",
             params: chips.length ? [el("div", {style: "grid-column: 1 / -1"}, chips)] : []}));
         out.push(step("Chest injuries (KAT)", {result: settingValue("kat_breathing_enable") ? `pneumothorax on ${pct(r.stats.pPneumothorax)} of single shots, deep penetrating injury on ${pct(r.stats.pDeepPenetrating)}` : "off in these settings",
@@ -1310,6 +1311,9 @@
         box.append(el("p", {text: `Configs merged from ${D.mods.length} mods of the ${D.preset.replace(".preset2", "")} preset plus Arma 3, extracted ${D.generated}. ` +
             `${new Set(D.skippedPbos.filter((p) => !p.reason.startsWith("skipWhen")).map((p) => p.pbo.split("\\")[0])).size} PBOs had a config that could not be read (voice packs, terrains, UI mods); ` +
             `${D.skippedPbos.filter((p) => p.reason.startsWith("skipWhen")).length} optional compatibility addons switch themselves off because their target mod is not loaded.`}));
+        box.append(el("p", {text: D.baced
+            ? `BACED addons: ${D.baced.loaded.length} loaded (built ${D.baced.built}), ${D.baced.skipped.length} skipped because their mod is not in the preset`
+            : "BACED addons not loaded: run hemtt build, then extract.py"}));
         if (serverCount) {
             const pick = el("div", {class: "seg", role: "radiogroup", "aria-label": "Settings base"}, [
                 el("input", {type: "radio", name: "base", id: "baseServer", checked: !state.modDefaults}), el("label", {for: "baseServer", text: `Server settings (${serverCount} values)`}),

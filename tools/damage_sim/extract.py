@@ -5,7 +5,7 @@ order, later addons patch earlier classes), resolves inheritance, and writes
 the values the damage model needs to data/game_data.json.
 
 Usage:
-    python3 extract.py [--preset NAME.preset2] [--out data/game_data.json]
+    python3 extract.py [--preset NAME.preset2] [--baced DIR | --no-baced] [--out data/game_data.json]
 """
 import argparse
 import glob
@@ -16,11 +16,15 @@ import subprocess
 import sys
 import tempfile
 import time
+import xml.etree.ElementTree as ET
 
 import armaconfig as ac
 import cbasettings as cs
 
 CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache")
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+DEFAULT_BACED = os.path.join(REPO_ROOT, ".hemttout", "build", "addons")
+BACED_STRINGTABLE = os.path.join(REPO_ROOT, "addons", "medical", "stringtable.xml")
 
 # Override with the ARMA_STEAMAPPS environment variable on another machine
 STEAM = os.environ.get("ARMA_STEAMAPPS", "/mnt/Games/SteamLibrary/steamapps")
@@ -246,7 +250,7 @@ def scan_scripts(pbo, entries, label, findings, settings):
                 settings[name] = info
 
 
-def load_addons(mods, log):
+def load_addons(mods, log, baced_pbos=()):
     sources = [("Arma 3", os.path.join(ARMA, "Dta", "bin.pbo"), True)]
     for d in VANILLA_DIRS:
         for pbo in pbos_in(os.path.join(ARMA, d)) if d != "Addons" else sorted(glob.glob(os.path.join(ARMA, "Addons", "*.pbo")), key=str.lower):
@@ -254,6 +258,7 @@ def load_addons(mods, log):
     for mod in mods:
         for pbo in pbos_in(mod["folder"]):
             sources.append((mod["name"], pbo, False))
+    sources.extend(("BACED", pbo, False) for pbo in baced_pbos)
 
     addons = []
     skipped = []
@@ -305,7 +310,7 @@ def add_addon(addons, label, pbo, where, root):
                 if isinstance(r, str):
                     required.add(r.lower())
     addons.append({"label": label, "pbo": pbo, "where": where, "root": root, "skipMissing": skip_missing,
-                   "patches": [n.lower() for n in names], "required": required})
+                    "patches": [n.lower() for n in names], "patchNames": names, "required": required})
 
 
 def filter_missing(addons, skipped):
@@ -315,7 +320,8 @@ def filter_missing(addons, skipped):
         missing = addon["required"] - available
         if missing and addon["skipMissing"]:
             skipped.append({"mod": addon["label"], "pbo": addon["where"],
-                            "reason": "skipWhenMissingDependencies: " + ", ".join(sorted(missing))})
+                            "reason": "skipWhenMissingDependencies: " + ", ".join(sorted(missing)),
+                            "patches": addon["patchNames"]})
             continue
         kept.append(addon)
     return kept
@@ -717,9 +723,28 @@ def export_ace(injuries):
     return {"wounds": wounds, "damageTypes": types}
 
 
+def read_wound_names(path, wounds):
+    try:
+        table = ET.parse(path)
+    except FileNotFoundError:
+        return {}
+    english = {key.get("ID", "").lower(): key.findtext("English", "").strip()
+               for key in table.iter("Key")}
+    names = {}
+    for cls in wounds:
+        labels = [english.get(f"str_ace_medical_damage_{cls.lower()}_{size}") or None
+                  for size in ("minor", "medium", "large")]
+        if any(labels):
+            names[cls] = labels
+    return names
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--preset", default=DEFAULT_PRESET)
+    baced_opts = parser.add_mutually_exclusive_group()
+    baced_opts.add_argument("--baced", metavar="DIR", default=DEFAULT_BACED, help="directory of built BACED PBOs")
+    baced_opts.add_argument("--no-baced", action="store_true", help="omit BACED's built addons")
     parser.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "data", "game_data.json"))
     args = parser.parse_args()
     started = time.time()
@@ -729,8 +754,23 @@ def main():
     preset = args.preset if os.path.isabs(args.preset) else os.path.join(PRESETS, args.preset)
     mods = preset_mods(preset)
     log(f"preset {os.path.basename(preset)}: {len(mods)} mods")
+    baced_dir = os.path.abspath(args.baced)
+    baced_pbos = [] if args.no_baced else sorted(
+        (pbo for pbo in glob.glob(os.path.join(glob.escape(baced_dir), "*.pbo")) if os.path.isfile(pbo)),
+        key=str.lower)
+    if not args.no_baced and not baced_pbos:
+        log(f"warning: no BACED PBOs in {baced_dir}; run hemtt build at the repo root")
     load_global_defines()
-    addons, skipped, scripts, settings = load_addons(mods, log)
+    addons, skipped, scripts, settings = load_addons(mods, log, baced_pbos)
+    baced = None
+    if baced_pbos:
+        baced = {
+            "dir": baced_dir,
+            "pbos": [os.path.basename(pbo) for pbo in baced_pbos],
+            "loaded": [name for a in addons if a["label"] == "BACED" for name in a["patchNames"]],
+            "skipped": [name for a in skipped if a["mod"] == "BACED" for name in a.get("patches", [])],
+            "built": time.strftime("%Y-%m-%d %H:%M", time.localtime(max(map(os.path.getmtime, baced_pbos)))),
+        }
     log(f"{len(settings)} CBA settings found")
     ordered = load_order(addons)
 
@@ -742,10 +782,13 @@ def main():
     log("merged")
 
     weapons, magazines, ammo, gear, groups, ace = export(root, log)
+    if ace is not None:
+        ace["woundNames"] = read_wound_names(BACED_STRINGTABLE, ace["wounds"])
     data = {
         "generated": time.strftime("%Y-%m-%d %H:%M"),
         "preset": os.path.basename(preset),
         "mods": [m["name"] for m in mods],
+        "baced": baced,
         "weapons": weapons, "magazines": magazines, "ammo": ammo,
         "gear": gear, "groups": groups, "ace": ace,
         "skippedPbos": skipped, "damageScripts": scripts, "settings": settings,

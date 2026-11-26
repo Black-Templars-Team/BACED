@@ -1266,8 +1266,9 @@
         };
     }
 
-    function woundLabel(w) {
-        return ["Minor", "Medium", "Large"][w.category] + " " + w.type;
+    function woundLabel(w, data) {
+        return data?.ace?.woundNames?.[w.type]?.[w.category] ||
+            ["Minor", "Medium", "Large"][w.category] + " " + w.type;
     }
 
     /*
@@ -1396,7 +1397,7 @@
             if (n > 0) anyWound++;
             const seen = {};
             for (const w of ctx.wounds) {
-                const key = w.part + "|" + woundLabel(w);
+                const key = w.part + "|" + woundLabel(w, data);
                 woundTotals[key] = (woundTotals[key] || 0) + 1;
                 if (!seen[key]) { seen[key] = true; woundCounts[key] = (woundCounts[key] || 0) + 1; }
                 damageSum += w.damage;

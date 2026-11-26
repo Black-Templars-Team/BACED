@@ -87,6 +87,12 @@ the real/engine ratio is 1 and the handler skips.
 `ace_medical_woundReceived` runs the damage type's handlers in reverse config order. With the BT preset, bullets
 run **KAT pulmoHit → ACE armor penetration → Black Carapace → ACE base**.
 
+BACED defines `bolt`, `plasma`, `melta`, `laser` and `volkite` in `addons/medical`; flamers use ACE's
+`burn` type. The `addons/compat_*` ammo patches are generated from `tools/ammo_compat/ammo_map.json`.
+The sim reads the medical definitions and ammo patches from the built PBOs. After changing them, run
+`hemtt build` at the repo root, then rerun `extract.py` and `build_page.py`. English wound labels come
+from `addons/medical/stringtable.xml` during extraction.
+
 | Handler | Rule | Source | Confidence |
 |---|---|---|---|
 | Damage type | `ACE_damageType` of the ammo (inherited); unknown or missing types become `"unknown"`; Black Carapace's `"explosion"` is unknown | `medical_damage fnc_getTypeOfDamage` | exact |

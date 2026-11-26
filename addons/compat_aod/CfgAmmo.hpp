@@ -3,6 +3,7 @@
 class CfgAmmo {
     class BulletBase;
     class Flamethrower_Fuel;
+    class TIOW_Autocannon60mmHE;
     class TIOW_IG_HeavyBolter_Rnd;
     class TIOW_LemanRuss_Lascannon_Rnd;
     class TIOW_SM_Overcharge_PlasmagunRound;
@@ -39,6 +40,9 @@ class CfgAmmo {
     class STEVE_30k_PlasmaCannon_OC_Rnd: STEVE_30k_PlasmaCannon_Rnd {
         ACE_damageType = "plasma";
     };
+    class Steve_Autocannon60mmHE: TIOW_Autocannon60mmHE {
+        ACE_damageType = "bolt";
+    };
     class Steve_Jetbike_MultiMelta_Round: Steve_30k_Melta_Round {
         ACE_damageType = "melta";
     };
@@ -61,6 +65,9 @@ class CfgAmmo {
         ACE_damageType = "bolt";
     };
     class Steve_Phob_SmBoltRound_K: Steve_Phob_SmBoltRound {
+        ACE_damageType = "bolt";
+    };
+    class Steve_Rotor_Cannon_Round_new: BulletBase {
         ACE_damageType = "bolt";
     };
     class Steve_Ships_Las_round_rnd: TIOW_LemanRuss_Lascannon_Rnd {

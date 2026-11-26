@@ -14,8 +14,9 @@ Two front ends share one model (`damage_model.js`):
 ## Quick start
 
 ```bash
+hemtt build                 # run at the repo root to build BACED's medical and ammo compatibility PBOs
 cd tools/damage_sim
-python3 extract.py          # read Arma 3 + every preset mod -> data/game_data.json (about 15 s, 60 s on a cold cache)
+python3 extract.py          # read Arma 3, preset mods and BACED -> data/game_data.json (about 15 s, 60 s on a cold cache)
 python3 build_page.py       # -> data/page_data.js, data/roster.js, data/ace_body_images.js, data/server_settings.json, index.html
                             #    (--refresh-sheets downloads the cert and relic sheets again)
 xdg-open index.html         # or open it in any browser
@@ -24,6 +25,9 @@ node sim.js run --weapon BT_TyrianBolter --distance 100 --trace
 ```
 
 Rerun both Python steps after a mod update, a preset change or a new server settings export.
+Rebuild BACED first after changing its addons. `extract.py --baced DIR` reads PBOs directly from `DIR`
+instead of the repo's `.hemttout/build/addons/`. Use `--no-baced` to omit the local build. A missing or
+empty default or custom build directory produces a warning and extraction continues without it.
 
 ## Requirements
 
@@ -31,7 +35,7 @@ Rerun both Python steps after a mod update, a preset change or a new server sett
 |---|---|---|
 | Python | 3.10+, stdlib only | `extract.py`, `build_page.py`, readers |
 | Node.js | 18+ | `sim.js`, tests |
-| hemtt | 1.22+ on `PATH` | preprocessing unbinarized `config.cpp`, converting ACE `.paa` images |
+| hemtt | 1.22+ on `PATH` | building BACED, preprocessing unbinarized `config.cpp`, converting ACE `.paa` images |
 | Arma 3 + workshop mods | installed through Steam | source data |
 
 Paths default to this machine. On another machine set `ARMA_STEAMAPPS` to the `steamapps` folder that holds

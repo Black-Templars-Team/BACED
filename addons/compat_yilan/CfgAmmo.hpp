@@ -2,12 +2,15 @@
 
 class CfgAmmo {
     class B_127x33_Ball;
+    class B_127x99_Ball;
     class B_20mm_Tracer_Red;
     class B_30mm_MP;
     class B_40mm_APFSDS;
-    class YL001_BurstCannon_bullet;
     class YL001_FusionCannon_Bullet;
 
+    class YL001_BurstCannon_bullet: B_127x99_Ball {
+        ACE_damageType = "bolt";
+    };
     class YL001_exitus_base: B_127x33_Ball {
         ACE_damageType = "bolt";
     };

@@ -2,9 +2,11 @@
 
 class CfgAmmo {
     class B_12Gauge_Pellets_Submunition;
+    class BulletBase;
     class Dos_Bolter_Inferno_round;
     class Flamethrower_Fuel;
     class Primaris_Dos_Bolt_RifleRound;
+    class ShellBase;
     class Steve_Trig_SmBoltRound_DF;
     class Steve_Trig_SmBoltRound_K;
     class TIOW_Melta_Ammo;
@@ -13,14 +15,38 @@ class CfgAmmo {
     class TIOW_SmBoltRound;
     class TIOW_SmHeavyBolterRnd;
 
+    class BT_ASB_Rnd: BulletBase {
+        ACE_damageType = "bolt";
+    };
     class BT_Assault_Shotgun_Wyrmbreath_1: B_12Gauge_Pellets_Submunition {
         ACE_damageType = "burn";
     };
     class BT_Bolt_Rnd: TIOW_SmBoltRound {
         ACE_damageType = "bolt";
     };
+    class BT_GPC_Rnd: BulletBase {
+        ACE_damageType = "plasma";
+    };
+    class BT_MSB_Rnd: BulletBase {
+        ACE_damageType = "bolt";
+    };
     class BT_SmHeavyBolterRnd: TIOW_SmHeavyBolterRnd {
         ACE_damageType = "bolt";
+    };
+    class BT_T_Auto_APCR_Rnd: ShellBase {
+        ACE_damageType = "bolt";
+    };
+    class BT_T_Auto_HE_Rnd: ShellBase {
+        ACE_damageType = "bolt";
+    };
+    class BT_T_PC_Rnd: BulletBase {
+        ACE_damageType = "plasma";
+    };
+    class BT_TSB_Rnd: BulletBase {
+        ACE_damageType = "bolt";
+    };
+    class BT_XLC_Rnd: BulletBase {
+        ACE_damageType = "laser";
     };
     class BTA_Hand_Flamer_Ammo: Flamethrower_Fuel {
         ACE_damageType = "burn";
@@ -96,5 +122,8 @@ class CfgAmmo {
     };
     class Taj_P_Melta_Rnd: TIOW_Melta_Ammo {
         ACE_damageType = "melta";
+    };
+    class Taj_Shrike_Sniper_Ammo: BulletBase {
+        ACE_damageType = "bolt";
     };
 };

@@ -5,7 +5,11 @@ class CfgAmmo {
     class AoD_Tigrus_DF_Rnd;
     class AoD_Tigrus_Kr_Rnd;
     class BulletBase;
+    class Sh_120mm_HE;
 
+    class AoD_Autocannon_Rnd: Sh_120mm_HE {
+        ACE_damageType = "bolt";
+    };
     class AoD_Exitus_DF_Rnd: AoD_Tigrus_DF_Rnd {
         ACE_damageType = "bolt";
     };
@@ -35,6 +39,9 @@ class CfgAmmo {
     };
     class AoD_Plasma_Cannon_Rnd: AoD_Ryza_OC_Rnd {
         ACE_damageType = "plasma";
+    };
+    class AoD_Rotor_Cannon_Rnd: BulletBase {
+        ACE_damageType = "bolt";
     };
     class AoD_Ryza_Plasma_Rnd: BulletBase {
         ACE_damageType = "plasma";

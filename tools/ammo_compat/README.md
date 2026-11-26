@@ -5,6 +5,8 @@ BACED's `bolt`, `plasma`, `melta`, `laser`, or `volkite` damage types, or ACE's
 `burn` for flamers. `skipWhenMissingDependencies = 1` lets Arma skip each patch
 when its target mod or another required addon is absent.
 
+Only classes defined by 40k mods are mapped, never vanilla Arma 3, ACE or CBA classes; kinetic cannons count as `bolt`.
+
 The `after` list controls ordering when a later mod re-declares an ammo class
 with a new parent or `ACE_damageType`. The later mod's compat addon requires
 the earlier compat addon so it can reapply the patch in the right order.

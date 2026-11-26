@@ -2,7 +2,9 @@
 
 class CfgAmmo {
     class ammo_Penetrator_Base;
+    class B_30mm_APFSDS;
     class B_30mm_HE;
+    class B_40mm_GPR;
     class BulletBase;
     class Grenade;
     class LsCnnChrg1k;
@@ -20,6 +22,12 @@ class CfgAmmo {
     };
     class TIOW_Antioc43_LasBoltHeavy: Lucius98_LasBolt {
         ACE_damageType = "laser";
+    };
+    class TIOW_Autocannon60mmAP: B_30mm_APFSDS {
+        ACE_damageType = "bolt";
+    };
+    class TIOW_Autocannon60mmHE: B_40mm_GPR {
+        ACE_damageType = "bolt";
     };
     class TIOW_IG_HeavyBolter_Rnd: B_30mm_HE {
         ACE_damageType = "bolt";

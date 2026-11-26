@@ -6,7 +6,9 @@ Tests that need the game files skip themselves when ARMA_STEAMAPPS does not poin
 """
 import os
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
@@ -62,6 +64,41 @@ class TextConfig(unittest.TestCase):
         root = ac.parse_text("class A { x = 1; }; class B { y = 2; };", keep_top={"b"})
         self.assertIsNone(root.get("A"))
         self.assertEqual(root.get("B").get("y"), 2)
+
+
+class BacedAddons(unittest.TestCase):
+    def test_wound_names_use_english_in_size_order_for_exported_classes(self):
+        xml = '''<Project><Package>
+            <Key ID="STR_ACE_Medical_Damage_BoltWound_Large"><English>Mass-Reactive Wound</English></Key>
+            <Key ID="STR_ACE_Medical_Damage_BoltWound_Minor"><English>Minor Bolt Puncture</English></Key>
+            <Key ID="STR_ACE_Medical_Damage_BoltWound_Medium"><English>Bolt Wound</English></Key>
+            <Key ID="STR_ACE_Medical_Damage_LasBurn_Minor"><English>Minor Las Weal</English></Key>
+            <Key ID="STR_ACE_Medical_Damage_Contusion"><English>Contusion</English></Key>
+        </Package></Project>'''
+        wounds = {"BoltWound": {}, "Contusion": {}}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "stringtable.xml"
+            self.assertEqual(extract.read_wound_names(path, wounds), {})
+            path.write_text(xml, encoding="utf-8")
+            self.assertEqual(extract.read_wound_names(path, wounds), {
+                "BoltWound": ["Minor Bolt Puncture", "Bolt Wound", "Mass-Reactive Wound"],
+            })
+
+    def test_compat_keeps_baced_source_only_with_required_addons(self):
+        addons = []
+        for label, patch in (("ACE", "class ace_medical_damage {};"), ("40k", "class CTR_Weapons {};"),
+                             ("BACED", '''class baced_compat_CTR {
+                                 skipWhenMissingDependencies = 1;
+                                 requiredAddons[] = {"ace_medical_damage", "CTR_Weapons"};
+                             };''')):
+            pbo = label + ".pbo"
+            extract.add_addon(addons, label, pbo, pbo, ac.parse_text(f"class CfgPatches {{ {patch} }};"))
+        skipped = []
+        self.assertEqual(extract.filter_missing(addons, skipped)[-1]["label"], "BACED")
+        self.assertEqual(skipped, [])
+        self.assertEqual(extract.filter_missing([addons[0], addons[2]], skipped), addons[:1])
+        self.assertEqual(skipped, [{"mod": "BACED", "pbo": "BACED.pbo", "patches": ["baced_compat_CTR"],
+                                    "reason": "skipWhenMissingDependencies: ctr_weapons"}])
 
 
 class CbaSettings(unittest.TestCase):
