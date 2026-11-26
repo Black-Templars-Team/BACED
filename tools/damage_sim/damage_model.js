@@ -382,11 +382,22 @@
     }
 
     // ------------------------------------------------------------------ ACE wound handlers
-    function damageTypeOf(data, ammoName) {
-        const types = data.ace.damageTypes;
+    function woundConfig(data, woundSet) {
+        const original = woundSet === "ace" && data?.aceOriginal;
+        const ace = original || data?.ace;
+        return {ace: ace, woundSet: original ? "ace" : "baced",
+            damageTypeOf: (ammoName) => resolveDamageType(ace.damageTypes, data.ammo, ammoName, original)};
+    }
+
+    function damageTypeOf(data, ammoName, woundSet) {
+        return woundConfig(data, woundSet).damageTypeOf(ammoName);
+    }
+
+    function resolveDamageType(types, ammoTable, ammoName, original) {
         if (types[ammoName]) return ammoName;
-        const ammo = data.ammo[ammoName];
-        const declared = ammo && ammo.ACE_damageType;
+        const ammo = ammoTable[ammoName];
+        const declared = ammo && (original && Object.hasOwn(ammo, "ACE_damageTypeOriginal")
+            ? ammo.ACE_damageTypeOriginal : ammo.ACE_damageType);
         if (!declared) return "unknown";
         return types[declared] ? declared : "unknown";
     }
@@ -520,14 +531,14 @@
 
     // fnc_woundsHandlerBase
     function handlerBase(ctx, args) {
-        const data = ctx.data;
+        const ace = ctx.woundConfig.ace;
         const s = ctx.settings;
         const unit = ctx.unit;
         let typeOfDamage = args.typeOfDamage;
-        if (!data.ace.damageTypes[typeOfDamage]) typeOfDamage = "unknown";
-        const details = data.ace.damageTypes[typeOfDamage];
+        if (!ace.damageTypes[typeOfDamage]) typeOfDamage = "unknown";
+        const details = ace.damageTypes[typeOfDamage];
         const woundNames = Object.keys(details.wounds);
-        const woundIndex = Object.keys(data.ace.wounds);
+        const woundIndex = Object.keys(ace.wounds);
 
         let painLevel = 0;
         let critical = false;
@@ -565,7 +576,7 @@
                     roll -= w.weight;
                 }
                 const mods = details.wounds[chosen.name];
-                const wound = data.ace.wounds[chosen.name];
+                const wound = ace.wounds[chosen.name];
                 const classId = woundIndex.indexOf(chosen.name);
 
                 const woundDamage = dmgPerWound * mods.damageMultiplier * ctx.rng.gauss(0.9, 1, 1.1);
@@ -645,8 +656,8 @@
         // Match the battery's WOUND payload, before ACE's handlers transform it into injuries.
         ctx.woundEvents++;
         for (const [damage] of allDamages) ctx.aceDamage += damage;
-        const typeOfDamage = damageTypeOf(ctx.data, ammo);
-        const details = ctx.data.ace.damageTypes[typeOfDamage];
+        const typeOfDamage = ctx.woundConfig.damageTypeOf(ammo);
+        const details = ctx.woundConfig.ace.damageTypes[typeOfDamage];
         const chain = (details.woundHandlers || []).slice().reverse();
         ctx.note("event", "woundReceived: ammo \"" + ammo + "\" -> damage type \"" + typeOfDamage + "\"; handlers " +
             chain.map(function (h) { return h[0]; }).join(" -> "));
@@ -1018,6 +1029,7 @@
         const geometry = impact === "Blast" ? null : (scenario.geometry || null);
         const roundsPerMag = Math.max(1, Math.round(magazine.count || 1));
         const magazines = Math.max(1, Math.round(scenario.magazines || 1));
+        const wounds = woundConfig(data, scenario.woundSet);
         return {
             data: data, settings: settings, weapon: weapon, muzzle: muzzle, magazineName: magName, magazine: magazine,
             ammoName: ammoName, ammo: ammo, firedAmmoName: firedAmmoName,
@@ -1034,7 +1046,7 @@
                 subcategory: aiUnit.subcategory} : undefined,
             blastDistance: blastDistance,
             blastFalloff: impact === "Blast" ? blastFalloff(blastDistance, ammo.indirectHitRange || 0, settings.engine_blastFalloffEnd) : 1,
-            damageType: damageTypeOf(data, ammoName),
+            woundConfig: wounds, damageType: wounds.damageTypeOf(ammoName),
         };
     }
 
@@ -1201,6 +1213,7 @@
     function fireOne(data, prep, unit, rng, trace) {
         const ctx = {
             data: data, settings: prep.settings, gear: prep.gear, unit: unit, rng: rng, wounds: [],
+            woundConfig: prep.woundConfig,
             unknownHandlers: {}, trace: trace ? [] : null, magLocked: false, shots: [], woundEvents: 0, aceDamage: 0,
             note: function (stage, text, detail) {
                 if (this.trace) this.trace.push({stage: stage, text: text, detail: detail || null});
@@ -1271,8 +1284,12 @@
         };
     }
 
-    function woundLabel(w, data) {
-        return data?.ace?.woundNames?.[w.type]?.[w.category] ||
+    function woundLabel(w, data, woundSet) {
+        return labelFromAce(w, woundConfig(data, woundSet).ace);
+    }
+
+    function labelFromAce(w, ace) {
+        return ace?.woundNames?.[w.type]?.[w.category] ||
             ["Minor", "Medium", "Large"][w.category] + " " + w.type;
     }
 
@@ -1402,7 +1419,7 @@
             if (n > 0) anyWound++;
             const seen = {};
             for (const w of ctx.wounds) {
-                const key = w.part + "|" + woundLabel(w, data);
+                const key = w.part + "|" + labelFromAce(w, prep.woundConfig.ace);
                 woundTotals[key] = (woundTotals[key] || 0) + 1;
                 if (!seen[key]) { seen[key] = true; woundCounts[key] = (woundCounts[key] || 0) + 1; }
                 damageSum += w.damage;
@@ -1430,7 +1447,7 @@
                 distance: prep.distance, impact: prep.impact, firedAmmo: prep.firedAmmoName,
                 pellets: prep.pellets, pelletsInCone: prep.pelletsInCone, isPlayer: prep.isPlayer,
                 impactLabel: prep.impact === "Blast" ? "Blast (indirect)" : IMPACTS[viewImpact].label,
-                path: prep.useBco ? "bco" : "vanilla", damageType: prep.damageType,
+                path: prep.useBco ? "bco" : "vanilla", damageType: prep.damageType, woundSet: prep.woundConfig.woundSet,
                 fireMode: prep.fireMode ? prep.fireMode.name : "", reloadTime: prep.reloadTime, dispersion: prep.dispersion,
                 spreadMrad: prep.spreadMrad, roundsPerMag: prep.roundsPerMag, magazines: prep.magazines, shots: prep.shots,
                 aim: prep.aim, geometry: Boolean(prep.geometry), unit: prep.unit, target_stance: prep.targetStance,
@@ -1688,6 +1705,7 @@
         hitpointArmor: hitpointArmor,
         resolveLoadout: resolveLoadout,
         damageTypeOf: damageTypeOf,
+        woundConfig: woundConfig,
         IMPACTS: IMPACTS,
         GAME_TO_FIGURE: GAME_TO_FIGURE,
         gameToFigure: gameToFigure,

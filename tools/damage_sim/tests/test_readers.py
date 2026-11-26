@@ -92,6 +92,39 @@ class TextConfig(unittest.TestCase):
 
 
 class BacedAddons(unittest.TestCase):
+    def test_original_ammo_types_record_only_differences(self):
+        original = extract.Node("")
+        merged = extract.Node("")
+        config = ac.parse_text('''
+            class CfgAmmo {
+                class BulletBase {ACE_damageType = "bullet";};
+                class Patched: BulletBase {hit = 10;};
+                class Unchanged: BulletBase {hit = 10;};
+                class Untyped {hit = 10;};
+                class RemovedType: BulletBase {hit = 10;};
+            };
+        ''')
+        for root in (original, merged):
+            extract.merge(root, config, "fixture")
+        extract.merge(merged, ac.parse_text('''
+            class CfgAmmo {
+                class Patched {ACE_damageType = "bolt";};
+                class Untyped {ACE_damageType = "las";};
+                class RemovedType: UntypedBase {};
+                class UntypedBase {hit = 10;};
+                class NewAmmo {ACE_damageType = "bolt";};
+            };
+        '''), "BACED")
+        names = ("Patched", "Unchanged", "Untyped", "RemovedType", "NewAmmo")
+        ammo = {name: extract.export_ammo(merged.child("CfgAmmo").child(name)) for name in names}
+        extract.add_original_ammo_types(ammo, original.child("CfgAmmo"))
+
+        self.assertEqual({name: row["ACE_damageTypeOriginal"] for name, row in ammo.items()
+                          if "ACE_damageTypeOriginal" in row},
+                         {"Patched": "bullet", "Untyped": None, "RemovedType": "bullet", "NewAmmo": None})
+        self.assertEqual(ammo["Patched"]["ACE_damageType"], "bolt")
+        self.assertNotIn("ACE_damageType", ammo["RemovedType"])
+
     def test_wound_names_use_english_in_size_order_for_exported_classes(self):
         xml = '''<Project><Package>
             <Key ID="STR_ACE_Medical_Damage_BoltWound_Large"><English>Mass-Reactive Wound</English></Key>
@@ -141,6 +174,13 @@ class BacedAddons(unittest.TestCase):
 
 
 class CbaSettings(unittest.TestCase):
+    def test_numeric_defines_ignore_dotted_version(self):
+        self.assertEqual(cs.parse_defines('''
+            #define VERSION 1.0.1
+            #define COUNT 4
+            #define RATE -.5
+        '''), {"COUNT": 4, "RATE": -0.5})
+
     def test_export_file(self):
         parsed = cs.parse_cba_settings_file('''
             force force ace_medical_playerDamageThreshold = 4;

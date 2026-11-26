@@ -5,7 +5,7 @@
  *   node sim.js find <text> [--kind weapon|uniform|vest|helmet|backpack|ammo|unit]
  *   node sim.js weapon <WeaponClass>                     # muzzles, magazines, ammo stats
  *   node sim.js run --weapon C [--magazine C] [--muzzle M] [--distance 100] [--impact HitChest]
- *                   [--uniform C --vest C --helmet C --backpack C] [--mode auto|bco|vanilla]
+ *                   [--uniform C --vest C --helmet C --backpack C] [--mode auto|bco|vanilla] [--wounds baced|ace]
  *                   [--halo none|bronze|silver|gold|refractor] [--magazines 1] [--fire-mode FullAuto]
  *                   [--ai | --unit C] [--stance standing|crouched] [--spread 2 (mrad shooter error)] [--aim x,y (metres)] [--no-geometry]
  *                   [--blast-distance N (metres, for --impact Blast)] [--compare-armor-pen]
@@ -104,7 +104,7 @@ function scenarioFrom(args) {
             uniform: args.uniform || DEFAULT_LOADOUT.uniform, vest: args.vest === undefined ? DEFAULT_LOADOUT.vest : args.vest,
             helmet: args.helmet === undefined ? DEFAULT_LOADOUT.helmet : args.helmet, backpack: args.backpack || "",
         },
-        mode: args.mode || "auto", ironHalo: args.halo || "none",
+        mode: args.mode || "auto", ironHalo: args.halo || "none", woundSet: args.wounds ?? "baced",
         samples: Number(args.samples || 2000), seed: Number(args.seed || 1),
         pellets: args.pellets === undefined ? undefined : Number(args.pellets),
         traceHit: args["trace-hit"] === undefined ? undefined : Number(args["trace-hit"]),
@@ -222,6 +222,11 @@ function printResult(r, withTrace) {
 function main() {
     const args = parseArgs(process.argv.slice(2));
     const cmd = args._[0];
+    if (["run", "sweep", "balance"].includes(cmd) && args.wounds !== undefined && !["baced", "ace"].includes(args.wounds)) {
+        console.error("--wounds must be baced or ace");
+        process.exitCode = 1;
+        return;
+    }
     if (cmd === "calibrate") {
         const rptPaths = args.rpt.flatMap((value) => value.split(",").map((file) => file.trim()));
         if (!rptPaths.length || rptPaths.some((file) => !file)) {

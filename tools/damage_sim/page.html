@@ -86,7 +86,11 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* aim figure */
 .aim-wrap { display: grid; gap: 8px; }
-.aim-canvas { width: 100%; max-width: 300px; justify-self: center; display: block; cursor: crosshair; background: var(--well); border-radius: 4px; touch-action: none; }
+.aim-figure { position: relative; width: 100%; max-width: 300px; justify-self: center; }
+.aim-canvas { position: relative; width: 100%; display: block; cursor: crosshair; background: var(--well); border-radius: 4px; touch-action: none; }
+.aim-outline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; background: var(--well); border-radius: 4px; }
+.aim-outline polygon { fill: var(--plate); stroke: color-mix(in srgb, var(--plate) 75%, black); stroke-width: 1; stroke-linejoin: round; }
+.aim-outline:not([hidden]) + .aim-canvas { background: transparent; }
 .aim-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
 .body-svg { width: 132px; height: auto; display: block; }
 .zone { fill: var(--well); stroke: var(--line); stroke-width: 1; cursor: pointer; }
@@ -333,7 +337,10 @@ body.tab-balance .single-only { display: none !important; }
         <div class="field">
             <span class="label" id="aimLabel">Aim point</span>
             <div class="aim-wrap" id="aimWrap">
-                <canvas id="aimCanvas" class="aim-canvas" tabindex="0" aria-labelledby="aimLabel" hidden></canvas>
+                <div id="aimFigure" class="aim-figure" hidden>
+                    <svg id="aimOutline" class="aim-outline" preserveAspectRatio="none" aria-hidden="true" hidden></svg>
+                    <canvas id="aimCanvas" class="aim-canvas" tabindex="0" aria-labelledby="aimLabel"></canvas>
+                </div>
                 <svg class="body-svg" viewBox="0 0 132 250" role="group" aria-labelledby="aimLabel" id="bodySvg" hidden>
                     <circle class="zone" data-hp="HitHead" cx="66" cy="22" r="17" tabindex="0" role="button" aria-label="Head"></circle>
                     <rect class="zone" data-hp="HitNeck" x="58" y="41" width="16" height="9" rx="2" tabindex="0" role="button" aria-label="Neck"></rect>
@@ -385,6 +392,14 @@ body.tab-balance .single-only { display: none !important; }
             <span class="hint" id="aiHint" role="status" hidden></span>
             <dl class="hint unit-summary" id="aiSummary"></dl>
         </fieldset>
+        <div class="field">
+            <span class="label" id="woundsLabel">Wound types</span>
+            <div class="seg" role="radiogroup" aria-labelledby="woundsLabel" aria-describedby="woundsHint">
+                <input type="radio" name="woundSet" id="woundsBaced" value="baced"><label for="woundsBaced">BACED 40k</label>
+                <input type="radio" name="woundSet" id="woundsAce" value="ace"><label for="woundsAce">Original ACE</label>
+            </div>
+            <span class="hint" id="woundsHint">Original ACE: what the game does without BACED's medical and ammo compat addons</span>
+        </div>
         <div class="field">
             <span class="label" id="bcoLabel">Black Carapace armor mode</span>
             <div class="seg" role="radiogroup" aria-labelledby="bcoLabel">

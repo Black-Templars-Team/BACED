@@ -193,7 +193,7 @@ def parse_settings(text, prefix=None, defines=None):
     return out
 
 
-DEFINE = re.compile(r"^\s*#define\s+(\w+)\s+([-\d.]+)\s*$", re.M)
+DEFINE = re.compile(r"^[ \t]*#define[ \t]+(\w+)[ \t]+(-?(?:\d+(?:\.\d*)?|\.\d+))[ \t\r]*$", re.M)
 
 
 def parse_defines(text):

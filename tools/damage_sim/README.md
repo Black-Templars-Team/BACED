@@ -6,7 +6,7 @@ preset and the BT server settings, so balance questions can be answered without 
 
 Two front ends share one model (`damage_model.js`):
 
-- **Web page**: `index.html` (opens straight from disk) and a private claude.ai artifact. Two tabs: **Single
+- **Web page**: `index.html` (opens straight from disk) and [the public GitHub Pages site](https://black-templars-team.github.io/BACED/). Two tabs: **Single
   weapon** (one weapon against one marine, step by step) and **Weapon balancing** (every cert and relic weapon on
   one scatter plot, see [docs/PAGE.md](docs/PAGE.md#weapon-balancing-tab)).
 - **Command line**: `node sim.js ...`, for scripts and agents.
@@ -33,11 +33,32 @@ Rebuild BACED first after changing its addons. `extract.py --baced DIR` reads PB
 instead of the repo's `.hemttout/build/addons/`. Use `--no-baced` to omit the local build. A missing or
 empty default or custom build directory produces a warning and extraction continues without it.
 
+Use **Wound types** in the page's left column to switch both tabs between **BACED 40k** (default) and
+**Original ACE**. Original ACE uses the wound definitions and ammo damage types from the same preset
+without BACED's medical and ammo compat addons. If the export lacks original wound data, the page
+disables the toggle and the CLI falls back to the loaded wound data.
+
+## Publish to GitHub Pages
+
+From the repo root, rebuild and publish the current preset and BT server settings snapshot:
+
+```bash
+hemtt build
+cd tools/damage_sim
+python3 extract.py
+python3 build_page.py
+python3 publish_pages.py --push
+```
+
+Run `python3 publish_pages.py` without `--push` to preview the files in the gitignored `site/` directory.
+The public aim figure uses only the hit-volume outline; the rendered body picture stays on the local page.
+See [docs/PAGE.md](docs/PAGE.md#republishing-to-github-pages) for the branch and Pages settings.
+
 ## Requirements
 
 | Tool | Version | Used for |
 |---|---|---|
-| Python | 3.10+, stdlib only | `extract.py`, `build_page.py`, readers |
+| Python | 3.10+, stdlib only | `extract.py`, `build_page.py`, `publish_pages.py`, readers |
 | Node.js | 18+ | `sim.js`, tests |
 | hemtt | 1.22+ on `PATH` | building BACED, preprocessing unbinarized `config.cpp`, converting ACE `.paa` images |
 | Arma 3 + workshop mods | installed through Steam | source data |
@@ -71,6 +92,7 @@ node sim.js calibrate --rpt path/to/arma3.rpt [--rpt path/to/another.rpt] [--jso
 | `--unit C` | AI unit class C from Eden: sets the loadout (uniform, vest, helmet, backpack, from config only) and the AI target |
 | `--stance standing\|crouched` | target stance (`target_stance`; default: `standing`); crouching removes the marine standing ceiling |
 | `--mode auto\|bco\|vanilla` | Black Carapace suit on, off, or on when the uniform is listed |
+| `--wounds baced\|ace` | wound set for `run`, `sweep` and `balance` (default: `baced`) |
 | `--halo none\|bronze\|silver\|gold\|refractor` | Iron Halo tier |
 | `--uniform C --vest C --helmet C --backpack C` | loadout (default: TIOW Mk 7 Black Templars) |
 | `--set name=value`, `--settings file.sqf` | override CBA settings or engine assumptions |

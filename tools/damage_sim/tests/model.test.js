@@ -272,6 +272,61 @@ test("CTR Bolt Rifle with the suit off uses BACED bolt wounds and labels", opts,
     assert.strictEqual(M.woundLabel({type: "Contusion", category: 1}, data), "Medium Contusion");
 });
 
+test("CTR Bolt Rifle chest shots use the selected wound set",
+    {skip: !data?.aceOriginal && "run python3 extract.py with BACED to export both wound sets"}, () => {
+        const sc = base({weapon: "CTR_Bolt_Rifle", unit: WB_CLASS, mode: "vanilla", traceHit: 1});
+        const baced = M.simulate(data, {...sc, woundSet: "baced"});
+        const original = M.simulate(data, {...sc, woundSet: "ace"});
+        const bacedChest = baced.traceWounds.filter(w => w.part === "Body");
+        const originalChest = original.traceWounds.filter(w => w.part === "Body");
+        assert.ok(bacedChest.some(w => w.type === "BoltWound"), JSON.stringify(bacedChest));
+        assert.equal(M.damageTypeOf(data, "BT_MSB_Rnd", "baced"), "bolt");
+        assert.equal(M.damageTypeOf(data, "BT_MSB_Rnd", "ace"), "bullet");
+        assert.ok(originalChest.some(w => ["VelocityWound", "Avulsion"].includes(w.type)), JSON.stringify(originalChest));
+        assert.ok(original.traceWounds.every(w => w.type !== "BoltWound"));
+    });
+
+test("The selected wound set drives wound creation and displayed names", () => {
+    const fixture = require("./fixtures/sample-data.json");
+    const woundSet = (damageType, woundType, woundNames) => ({
+        wounds: {[woundType]: {pain: 0.1, bleeding: 0.1}}, woundNames,
+        damageTypes: {[damageType]: {thresholds: [[0, 1]], selectionSpecific: false,
+            woundHandlers: [["ace_medical_damage_woundsHandlerBase"]],
+            wounds: {[woundType]: {weighting: [[0, 1]], damageMultiplier: 1, sizeMultiplier: 1,
+                painMultiplier: 1, bleedingMultiplier: 1}}}},
+    });
+    const bench = {...fixture,
+        weapons: {Bench: {muzzles: [{name: "this", initSpeed: 0, magazines: ["BenchMag"]}]}},
+        magazines: {BenchMag: {initSpeed: 1000, ammo: "BenchRound"}},
+        ammo: {BenchRound: {...fixture.ammo.BenchRound, ACE_damageType: "bolt", ACE_damageTypeOriginal: "bullet"}},
+        ace: woundSet("bolt", "BoltWound", {BoltWound: Array(3).fill("Bolt Puncture")}),
+        aceOriginal: woundSet("bullet", "VelocityWound", {}),
+    };
+    const sc = {weapon: "Bench", impact: "HitChest", mode: "vanilla", loadout: {uniform: "BenchUniform"},
+        samples: 2, traceHit: 1};
+    const baced = M.simulate(bench, sc);
+    const original = M.simulate(bench, {...sc, woundSet: "ace"});
+    assert.equal(baced.traceWounds[0].type, "BoltWound");
+    assert.equal(original.traceWounds[0].type, "VelocityWound");
+    assert.equal(baced.woundTable[0].wound, "Bolt Puncture");
+    assert.match(original.woundTable[0].wound, /VelocityWound$/);
+});
+
+test("Original ACE distinguishes an unset ammo damage type from an unchanged one", () => {
+    const ace = {damageTypes: {bullet: {}}, woundNames: {VelocityWound: ["Patched label"]}};
+    const data = {ace, aceOriginal: {...ace, woundNames: {}}, ammo: {
+        unset: {ACE_damageType: "bullet", ACE_damageTypeOriginal: null},
+        unchanged: {ACE_damageType: "bullet"},
+    }};
+    assert.equal(M.damageTypeOf(data, "unset"), "bullet");
+    assert.equal(M.damageTypeOf(data, "unset", "ace"), "unknown");
+    assert.equal(M.damageTypeOf(data, "unchanged", "ace"), "bullet");
+    assert.equal(M.damageTypeOf({...data, aceOriginal: null}, "unset", "ace"), "bullet");
+    const wound = {type: "VelocityWound", category: 0};
+    assert.equal(M.woundLabel(wound, data), "Patched label");
+    assert.equal(M.woundLabel(wound, data, "ace"), "Minor VelocityWound");
+});
+
 test("CTR Bolt Rifle at 100 m: WB Mk 4 chest aim gives battery-scale damage per round",
     {skip: !haveData || !geometry ? "requires the extracted preset and body geometry" : false}, () => {
         const r = M.simulate(data, {weapon: "CTR_Bolt_Rifle", unit: "30k_Steve_Tactical_Legionary_MK_4_WB",

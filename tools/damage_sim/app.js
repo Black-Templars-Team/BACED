@@ -19,7 +19,7 @@
         aiUnit: defaultAiUnit, aiBrowse: "units", aiSelections: {}, aiFilter: "", comparePen: false,
         loadout: {uniform: "TIOW_Mk7PowerArmor_1_BT", vest: "TIOW_Mk7Limbs_BT", helmet: "TIOW_MK7Helmet_BT", backpack: ""},
         bco: "on", halo: "none", inspect: 0, smooth: false, acePart: -1, modDefaults: false, settings: {}, overrides: {},
-        tab: "single",
+        tab: "single", woundSet: "baced",
         balance: {outcome: "down", reload: 3, otherMods: false, hidden: {}, acquisition: {default: true, earnable: true, relic: true}},
     };
     const PART_NAMES = ["Head", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg"];
@@ -39,6 +39,7 @@
             s.balance.acquisition = Object.assign({}, DEFAULTS.balance.acquisition, s.balance.acquisition);
         }
         if (s.tab !== "balance") s.tab = "single";
+        if (!D.aceOriginal || s.woundSet !== "ace") s.woundSet = "baced";
         if (!D.weapons[s.weapon]) s.weapon = DEFAULTS.weapon;
         if (!Object.hasOwn(AI_UNITS, s.aiUnit)) s.aiUnit = defaultAiUnit;
         if (s.aiBrowse !== "groups") s.aiBrowse = "units";
@@ -333,7 +334,7 @@
         fillSelect($("aimPreset"), presets, state.aim ? "custom" : state.impact);
         $("blastBtn").setAttribute("aria-pressed", String(state.impact === "Blast"));
         $("blastDistanceField").hidden = state.impact !== "Blast";
-        $("aimCanvas").hidden = !G;
+        $("aimFigure").hidden = !G;
         $("bodySvg").hidden = Boolean(G);
         for (const z of document.querySelectorAll(".zone")) z.setAttribute("aria-pressed", String(z.dataset.hp === state.impact));
         renderAimHint();
@@ -360,6 +361,20 @@
     }
     function toPx(x, y) { return [(x - G.minx) * G.scale, (G.maxy - y) * G.scale]; }
     function fromPx(px, py) { return {x: px / G.scale + G.minx, y: G.maxy - py / G.scale}; }
+    function drawFireOutline() {
+        const outline = $("aimOutline");
+        if (!outline.hasAttribute("viewBox")) {
+            outline.setAttribute("viewBox", `0 0 ${G.width} ${G.height}`);
+            const faces = G.fireFaces.map((face) => ({
+                z: face.reduce((sum, p) => sum + p[2], 0) / face.length,
+                points: face.map(([x, y]) => toPx(x, y).join(",")).join(" "),
+            }));
+            // The front view looks along +z, so smaller z is nearer.
+            faces.sort((a, b) => b.z - a.z);
+            for (const {points} of faces) outline.append(svg("polygon", {points}));
+            outline.removeAttribute("hidden");
+        }
+    }
     let figureImg = null;
     function drawAim() {
         if (!G) return;
@@ -373,7 +388,7 @@
         ctx.clearRect(0, 0, G.width, G.height);
         const css = getComputedStyle(document.documentElement);
         const paint = () => {
-            ctx.drawImage(figureImg, 0, 0, G.width, G.height);
+            if (figureImg) ctx.drawImage(figureImg, 0, 0, G.width, G.height);
             if (state.tab !== "balance" && lastResult && lastResult.burst.cloud && state.impact !== "Blast") {
                 for (const [x, y, hit] of lastResult.burst.cloud) {
                     const [px, py] = toPx(x, y);
@@ -399,7 +414,10 @@
                 ctx.stroke();
             }
         };
-        if (!figureImg) {
+        if (!G.image) {
+            drawFireOutline();
+            paint();
+        } else if (!figureImg) {
             figureImg = new Image();
             figureImg.onload = paint;
             figureImg.src = G.image;
@@ -418,7 +436,7 @@
             unit: state.target === "ai" ? state.aiUnit || undefined : undefined,
             loadout: state.target === "player" ? state.loadout : undefined,
             mode: state.target === "ai" ? "auto" : state.bco === "on" ? "bco" : "vanilla", ironHalo: state.halo,
-            compareArmorPen: state.comparePen, blastDistance: state.blastDistance,
+            compareArmorPen: state.comparePen, blastDistance: state.blastDistance, woundSet: state.woundSet,
             samples: 900, seed: 7, traceHit: state.inspect || undefined, viewShot: state.inspect || undefined,
             settings: state.settings, overrides: cleanOverrides(),
         }, extra || {});
@@ -803,7 +821,7 @@
         return aceColor("damage", Math.ceil(Math.min(1, Math.max(0, dmg / 0.8)) * 9));
     }
     // fnc_updateInjuryList
-    function injuryList(view, part) {
+    function injuryList(view, part, ace) {
         const s = settingDefaults();
         const v = (k) => settingValue(k, s);
         const out = [];
@@ -832,13 +850,13 @@
         out.push(["", [1, 1, 1, 1]]);
         out.push([PART_NAMES[part], [1, 1, 1, 1]]);
         if (view.fractures[part] === 1) out.push(["Fractured", [1, 0, 0, 1]]);
-        const classes = Object.keys(D.ace.wounds);
+        const classes = Object.keys(ace.wounds);
         const wounds = (view.openWounds[PART_KEYS[part]] || []).filter((w) => w[1] > 0);
         if (!wounds.length) out.push(["No injuries on this bodypart...", NONISSUE]);
         for (const w of wounds) {
             const cls = classes[Math.floor(w[0] / 10)];
             const category = w[0] % 10;
-            const name = D.ace.woundNames?.[cls]?.[category] || WOUND_NAMES[cls]?.[category] || cls;
+            const name = ace.woundNames?.[cls]?.[category] || WOUND_NAMES[cls]?.[category] || cls;
             out.push([w[1] >= 1 ? `${Math.ceil(w[1])}x ${name}` : `Partial ${name}`, [1, 1, 1, 1]]);
         }
         return out;
@@ -943,7 +961,8 @@
             if (e.key === "ArrowLeft" || e.key === "ArrowUp") { state.acePart = (part + 5) % 6; save(); renderMedical(lastResult); e.preventDefault(); }
         });
         drawAceBody(canvas, view, part);
-        const list = el("div", {class: "ace-list", role: "list"}, injuryList(view, part).map(([text, color]) =>
+        const ace = M.woundConfig(D, r.scenario.woundSet).ace;
+        const list = el("div", {class: "ace-list", role: "list"}, injuryList(view, part, ace).map(([text, color]) =>
             el("div", {role: "listitem", style: `color:${rgba(color)}`, text: text || " "})));
         const who = r.scenario.isPlayer ? "Space Marine (player)" : "Space Marine (AI)";
         box.append(el("div", {class: "ace-menu"}, [
@@ -1261,7 +1280,7 @@
         const out = [];
         const base = traceOf(r, "base");
         const chips = r.traceWounds.map((w) => el("span", {class: "wound-chip"},
-            `${M.woundLabel(w, D)} on ${partName(w.part)} (damage ${f(w.damage, 2)}, bleeding ${f(w.bleeding, 3)}${w.effect ? ", " + w.effect : ""})`));
+            `${M.woundLabel(w, D, r.scenario.woundSet)} on ${partName(w.part)} (damage ${f(w.damage, 2)}, bleeding ${f(w.bleeding, 3)}${w.effect ? ", " + w.effect : ""})`));
         out.push(step("Wounds", {result: base.map((t) => t.text).join(" · ") || "no wound event on this shot",
             params: chips.length ? [el("div", {style: "grid-column: 1 / -1"}, chips)] : []}));
         out.push(step("Chest injuries (KAT)", {result: settingValue("kat_breathing_enable") ? `pneumothorax on ${pct(r.stats.pPneumothorax)} of single shots, deep penetrating injury on ${pct(r.stats.pDeepPenetrating)}` : "off in these settings",
@@ -1460,6 +1479,13 @@
         $("bcoOn").addEventListener("change", () => { state.bco = "on"; state.inspect = 0; renderBco(); update(); });
         $("bcoOff").addEventListener("change", () => { state.bco = "off"; state.inspect = 0; renderBco(); update(); });
         $("halo").addEventListener("change", () => { state.halo = $("halo").value; update(); });
+        for (const id of ["woundsBaced", "woundsAce"]) {
+            const control = $(id);
+            control.disabled = !D.aceOriginal;
+            control.checked = control.value === state.woundSet;
+            control.addEventListener("change", () => { state.woundSet = control.value; state.inspect = 0; update(true); });
+        }
+        if (!D.aceOriginal) $("woundsHint").textContent = "Original ACE wound data is unavailable in this export.";
         $("tabSingle").addEventListener("click", () => setTab("single"));
         $("tabBalance").addEventListener("click", () => setTab("balance"));
         for (const id of ["tabSingle", "tabBalance"]) $(id).addEventListener("keydown", (e) => {

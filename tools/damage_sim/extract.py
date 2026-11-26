@@ -433,6 +433,15 @@ def export_ammo(node):
     return out
 
 
+def add_original_ammo_types(ammo, original_cfg_ammo):
+    """Record original types for the exported classes, including inherited values."""
+    for name, row in ammo.items():
+        original = original_cfg_ammo.child(name) if original_cfg_ammo is not None else None
+        original_type = lookup(original, "ACE_damageType")
+        if original_type != row.get("ACE_damageType"):
+            row["ACE_damageTypeOriginal"] = original_type
+
+
 def magazines_of(weapon_like, wells):
     mags = list(lookup(weapon_like, "magazines", []) or [])
     for well in lookup(weapon_like, "magazineWell", []) or []:
@@ -750,11 +759,27 @@ def read_wound_names(path, wounds):
     return names
 
 
+def baced_build_dir(repo_root):
+    build_path = os.path.join(".hemttout", "build", "addons")
+    local = os.path.join(repo_root, build_path)
+    if os.path.isdir(local) or not os.path.isfile(os.path.join(repo_root, ".git")):
+        return local
+    # A linked worktree may share a HEMTT build with its main checkout.
+    try:
+        common = subprocess.check_output(
+            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            cwd=repo_root, text=True, stderr=subprocess.DEVNULL).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return local
+    shared = os.path.join(os.path.dirname(common), build_path)
+    return shared if os.path.isdir(shared) else local
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--preset", default=DEFAULT_PRESET)
     baced_opts = parser.add_mutually_exclusive_group()
-    baced_opts.add_argument("--baced", metavar="DIR", default=DEFAULT_BACED, help="directory of built BACED PBOs")
+    baced_opts.add_argument("--baced", metavar="DIR", help="directory of built BACED PBOs")
     baced_opts.add_argument("--no-baced", action="store_true", help="omit BACED's built addons")
     parser.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "data", "game_data.json"))
     args = parser.parse_args()
@@ -765,7 +790,10 @@ def main():
     preset = args.preset if os.path.isabs(args.preset) else os.path.join(PRESETS, args.preset)
     mods = preset_mods(preset)
     log(f"preset {os.path.basename(preset)}: {len(mods)} mods")
-    baced_dir = os.path.abspath(args.baced)
+    baced_dir = (os.path.abspath(args.baced) if args.baced is not None else
+                 DEFAULT_BACED if args.no_baced else baced_build_dir(REPO_ROOT))
+    if args.baced is None and baced_dir != DEFAULT_BACED:
+        log(f"using BACED build from the main checkout: {baced_dir}")
     baced_pbos = [] if args.no_baced else sorted(
         (pbo for pbo in glob.glob(os.path.join(glob.escape(baced_dir), "*.pbo")) if os.path.isfile(pbo)),
         key=str.lower)
@@ -786,22 +814,32 @@ def main():
     ordered = load_order(addons)
 
     root = Node("")
+    original_root = Node("") if baced is not None else None
     for addon in ordered:
         addon["root"].entries.pop("CfgPatches", None)
         merge(root, addon["root"], addon["label"])
+        # Dependency sorting can interleave BACED with preset addons.
+        if original_root is not None and addon["label"] != "BACED":
+            merge(original_root, addon["root"], addon["label"])
         addon["root"] = None
     log("merged")
 
     weapons, magazines, ammo, gear, groups, ace = export(root, log)
     if ace is not None:
         ace["woundNames"] = read_wound_names(BACED_STRINGTABLE, ace["wounds"])
+    ace_original = None
+    if original_root is not None:
+        ace_original = export_ace(original_root.child("ACE_Medical_Injuries"))
+        if ace_original is not None:
+            ace_original["woundNames"] = {}
+        add_original_ammo_types(ammo, original_root.child("CfgAmmo"))
     data = {
         "generated": time.strftime("%Y-%m-%d %H:%M"),
         "preset": os.path.basename(preset),
         "mods": [m["name"] for m in mods],
         "baced": baced,
         "weapons": weapons, "magazines": magazines, "ammo": ammo,
-        "gear": gear, "groups": groups, "ace": ace,
+        "gear": gear, "groups": groups, "ace": ace, "aceOriginal": ace_original,
         "skippedPbos": skipped, "damageScripts": scripts, "settings": settings,
         "bco": BCO or None,
     }

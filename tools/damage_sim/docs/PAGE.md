@@ -1,24 +1,26 @@
 # The web page
 
-Open `index.html` from disk after `python3 build_page.py`, or the private artifact
-<https://claude.ai/artifact/9r9emG12zsQFfjxST29NzU> (share it from the page's Share menu; others cannot open it
-until then). The page keeps your inputs in the browser's local storage.
+Open `index.html` from disk after `python3 build_page.py`, or visit the public site at
+<https://black-templars-team.github.io/BACED/>. The page keeps your inputs in the browser's local storage.
 
 ## Inputs (left column, in task order)
 
 | Input | Notes |
 |---|---|
-| Target | Player or AI: changes damage threshold, death chance, unconsciousness and fatal injury rules (summary under the switch). AI target opens a Unit picker: browse Units or Groups (like Eden categories), filter by side/faction/category/group, with cascading dropdowns; the loadout (uniform, vest, helmet, backpack) is read-only and comes from the unit's config only — scripted loadouts are not seen. |
+| Target | Player or AI: changes damage threshold, death chance, unconsciousness and fatal injury rules (summary under the switch). AI target opens a Unit picker: browse Units or Groups (like Eden categories), filter by side/faction/category/group, with cascading dropdowns; the loadout (uniform, vest, helmet, backpack) is read-only and comes from the unit's config only. Scripted loadouts are not seen. |
 | Weapon | filter by name, class or mod; the full name, mod and class show under the list. |
 | Muzzle, fire mode | fire mode sets the rate (`reloadTime`) and weapon dispersion. |
 | Ammunition | the magazine; its round count sets the burst length. |
 | Range | metres; changes velocity (suit off) and the size of the shot cloud. |
 | Magazines fired | burst length in whole magazines (up to 600 shots). |
 | Shooter aim error | mrad, added to weapon dispersion. 0 is a perfect rest, 2 to 5 a standing rifleman. |
-| Aim point | click the marine figure (arrow keys nudge), or pick a hitpoint; "Blast only" models splash without a direct hit — a distance field appears to set how far the burst is from the target, with a hint explaining the falloff. Blue dots landed, grey dots missed, the red ring is the aim point. |
+| Aim point | click the marine figure (arrow keys nudge), or pick a hitpoint; "Blast only" models splash without a direct hit. A distance field appears to set how far the burst is from the target, with a hint explaining the falloff. Blue dots landed, grey dots missed, the red ring is the aim point. |
 | Loadout | uniform, vest (pauldrons), helmet, backpack. Backpacks carry no armor in the engine or ACE. |
 | Black Carapace | suit on or off for players; always on for listed AI; disabled when `HOV_HUD_ONLY` is set. |
 | Iron Halo | shield tier, when the suit is on. |
+| Wound types | BACED 40k (default) or Original ACE, which uses wounds and ammo damage types without BACED's medical and ammo compat addons. The choice is saved and shared by both tabs. Disabled when the export lacks original wound data. |
+
+The CLI equivalent is `--wounds baced|ace` on `run`, `sweep` and `balance`.
 
 ## Results (right column)
 
@@ -44,7 +46,7 @@ until then). The page keeps your inputs in the browser's local storage.
 ## Weapon balancing tab
 
 Compare the cert and relic roster against the target set in the left column
-(player loadout or AI unit, stance, range, aim point, aim error, Black Carapace, Iron Halo; all shared with the
+(player loadout or AI unit, stance, range, aim point, aim error, Black Carapace, Iron Halo and wound types; all shared with the
 Single weapon tab). The weapon, muzzle, fire mode, ammunition and magazine fields are hidden on this tab.
 The aim figure keeps the aim point ring but hides the Single weapon shot cloud.
 
@@ -85,24 +87,16 @@ tab lists the edited classes and provides a **reset** link to clear the edits.
 The weapon lists come from the BT sheets through `rosters.py`. To map a sheet name the build cannot match, add it
 to `roster_overrides.json`.
 
-## Republishing the artifact
+## Republishing to GitHub Pages
 
-The artifact is built from `page.html` plus these files, at these published paths:
+Follow the [README build and publish commands](../README.md#publish-to-github-pages) to refresh the snapshot
+of the mod preset and BT server settings. Run `python3 publish_pages.py` to preview the files and sizes in
+the gitignored `site/` directory. Add `--push` to publish that build to `origin/gh-pages` from a temporary
+Git worktree. In GitHub's **Settings > Pages**, select **Deploy from a branch**, then `gh-pages` and `/(root)`.
 
-| Published path | Source |
-|---|---|
-| `damage_model.js` | `damage_model.js` |
-| `app.js` | `app.js` |
-| `balance_points.js` | `balance_points.js` |
-| `balance.js` | `balance.js` |
-| `data/roster.js` | `data/roster.js` |
-| `data/page_data.js` | `data/page_data.js` |
-| `data/body_geometry.js` | `data/body_geometry.js` |
-| `data/ace_body_images.js` | `data/ace_body_images.js` |
-
-With `data/game_data.json` available, rebuild with `python3 build_page.py`, then ask Claude to republish
-`tools/damage_sim/page.html` with those files to the URL above, so the link stays the same. The data file is
-about 8 MB; the artifact limit is 16 MB.
+The public site uses the hit-volume outline for aiming. The local `data/body_geometry.js` stays gitignored
+and keeps the rendered picture. The publisher writes a separate copy without the picture, or omits the
+file if it is missing locally. In that case the page uses the simple hitpoint picker.
 
 ## Design notes
 

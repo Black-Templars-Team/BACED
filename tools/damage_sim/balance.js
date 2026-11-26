@@ -55,6 +55,7 @@
     let redrawTimer = 0;
 
     function baseScenario() {
+        // Keep shared inputs such as woundSet in the scenario used for the cache key.
         const s = WB.scenario({
             weapon: undefined, muzzle: undefined, magazine: undefined, fireMode: undefined, magazines: 1,
             compareArmorPen: false, traceHit: undefined, viewShot: undefined, samples: undefined,
