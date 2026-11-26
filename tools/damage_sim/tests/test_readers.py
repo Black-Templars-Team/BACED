@@ -125,6 +125,20 @@ class BacedAddons(unittest.TestCase):
         self.assertEqual(skipped, [{"mod": "BACED", "pbo": "BACED.pbo", "patches": ["baced_compat_CTR"],
                                     "reason": "skipWhenMissingDependencies: ctr_weapons"}])
 
+    def test_compat_skips_addons_that_require_a_skipped_addon(self):
+        addons = []
+        for label, patch in (
+            ("A", 'class A { skipWhenMissingDependencies = 1; requiredAddons[] = {"Missing"}; };'),
+            ("B", 'class B { skipWhenMissingDependencies = 1; requiredAddons[] = {"A"}; };'),
+            ("C", "class C {};"),
+        ):
+            pbo = label + ".pbo"
+            extract.add_addon(addons, label, pbo, pbo, ac.parse_text(f"class CfgPatches {{ {patch} }};"))
+
+        skipped = []
+        self.assertEqual(extract.filter_missing(addons, skipped), addons[2:])
+        self.assertCountEqual([entry["mod"] for entry in skipped], ["A", "B"])
+
 
 class CbaSettings(unittest.TestCase):
     def test_export_file(self):

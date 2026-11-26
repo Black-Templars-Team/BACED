@@ -6,6 +6,7 @@ Writes:
     data/page_data.js   window.GAME_DATA = {...}, trimmed to what the page uses
     data/roster.js      window.ROSTER = {...}, the cert and relic weapon lists (rosters.py)
     index.html          page.html wrapped in a document skeleton, for opening from disk
+Also writes roster.js beside the selected game_data.json for the CLI if it is not in data/.
 page.html itself is the artifact source (the artifact host adds its own skeleton).
 """
 import argparse
@@ -212,8 +213,11 @@ def main():
     roster = rosters.roster_data(data, refresh=args.refresh_sheets)
     for e in roster["unmatched"]:
         print(f"  roster name not matched to a simulated weapon: {e['sheetName']!r} ({e['cert']}, {e['acquisition']})")
-    with open(os.path.join(HERE, "data", "roster.js"), "w") as f:
-        f.write("window.ROSTER = " + json.dumps(roster, separators=(",", ":")) + ";\n")
+    roster_js = "window.ROSTER = " + json.dumps(roster, separators=(",", ":")) + ";\n"
+    browser_roster = Path(HERE) / "data" / "roster.js"
+    browser_roster.write_text(roster_js, encoding="utf-8")
+    if source.parent.resolve() != browser_roster.parent.resolve():
+        source.with_name("roster.js").write_text(roster_js, encoding="utf-8")
     if not os.path.exists(os.path.join(HERE, "data", "body_geometry.js")):
         print("note: data/body_geometry.js is missing; the page falls back to the simple body figure")
 

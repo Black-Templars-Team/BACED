@@ -6,8 +6,12 @@
     at a target before opening the console, then fire one round at a time so
     callbacks can be attributed to the current shot. With no man under the
     cursor, manual watches nearby men and RUN describes the nearest one.
-    Re-execution replaces the old session. To stop and write DONE in manual mode,
-    run [] call BWB_fnc_finish in the console.
+    To stop and write DONE in manual mode, run [] call BWB_fnc_finish in the console.
+
+    This is a standalone debug-console script, not part of any addon. It is exempt
+    from one-function-per-file, PREP, XEH_preInit global defaults and the rule against
+    sharing data between functions through globals. Its BWB_* globals hold the
+    session state and are replaced on re-execution.
 
     In the newest Arma3_*.rpt under %LOCALAPPDATA%\Arma 3\, send the BWB| lines.
     Each message is BWB|TYPE|[SQF array payload]; speed is m/s, distance is m.
@@ -391,7 +395,7 @@ BWB_fnc_batteryFire = {
         if (_kind == "range") then {_shot pushBack _aimName};
         ["SHOT", _shot] call BWB_fnc_log;
     };
-    private _projectile = createVehicle [_ammoClass, ASLToAGL _originASL, [], 0, "CAN_COLLIDE"];
+    private _projectile = createVehicle [_ammoClass, [0, 0, 0], [], 0, "CAN_COLLIDE"];
     if (isNull _projectile) exitWith {
         [] call BWB_fnc_finish;
         hint "BWB: could not create calibration ammo; results are partial.";

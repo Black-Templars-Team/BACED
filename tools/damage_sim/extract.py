@@ -322,17 +322,20 @@ def add_addon(addons, label, pbo, where, root):
 
 
 def filter_missing(addons, skipped):
-    available = {p for a in addons for p in a["patches"]}
-    kept = []
-    for addon in addons:
-        missing = addon["required"] - available
-        if missing and addon["skipMissing"]:
-            skipped.append({"mod": addon["label"], "pbo": addon["where"],
-                            "reason": "skipWhenMissingDependencies: " + ", ".join(sorted(missing)),
-                            "patches": addon["patchNames"]})
-            continue
-        kept.append(addon)
-    return kept
+    while True:
+        available = {p for a in addons for p in a["patches"]}
+        kept = []
+        for addon in addons:
+            missing = addon["required"] - available
+            if missing and addon["skipMissing"]:
+                skipped.append({"mod": addon["label"], "pbo": addon["where"],
+                                "reason": "skipWhenMissingDependencies: " + ", ".join(sorted(missing)),
+                                "patches": addon["patchNames"]})
+                continue
+            kept.append(addon)
+        if len(kept) == len(addons):
+            return kept
+        addons = kept
 
 
 def preprocess_text_config(pbo):
